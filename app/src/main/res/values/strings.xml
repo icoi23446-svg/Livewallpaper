@@ -2,41 +2,11 @@
     <string name="app_name">Ultimate Live Wallpaper</string>
     <string name="apply">تطبيق الخلفية</string>
 
-    <!-- الألوان -->
-    <string-array name="colors_array">
-        <item>أحمر</item>
-        <item>أزرق</item>
-        <item>أخضر</item>
-        <item>أصفر</item>
-        <item>بنفسجي</item>
-        <item>سماوي</item>
-        <item>عشوائي</item>
-    </string-array>
-
-    <!-- الأنماط -->
+    <!-- أنماط جميلة -->
     <string-array name="patterns_array">
-        <item>موجات</item>
-        <item>دوائر</item>
-        <item>مربعات</item>
-        <item>نجوم</item>
-        <item>نقاط</item>
-        <item>تدرج لوني</item>
-        <item>عشوائي</item>
-    </string-array>
-
-    <!-- الاتجاهات -->
-    <string-array name="direction_array">
-        <item>أعلى</item>
-        <item>أسفل</item>
-        <item>يمين</item>
-        <item>يسار</item>
-    </string-array>
-
-    <!-- التأثيرات -->
-    <string-array name="effects_array">
-        <item>بدون</item>
-        <item>وميض</item>
-        <item>دوران</item>
-        <item>شفافية</item>
+        <item>Animated Gradient</item>
+        <item>Color Cycle</item>
+        <item>Particles</item>
+        <item>Waves</item>
     </string-array>
 </resources>
