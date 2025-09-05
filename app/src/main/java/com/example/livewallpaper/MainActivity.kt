@@ -5,13 +5,13 @@ import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // زرار وحيد
         val button = Button(this)
         button.text = "Set Live Wallpaper"
         setContentView(button)
@@ -26,8 +26,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 startActivity(intent)
             } catch (e: Exception) {
-                val intent = Intent(WallpaperManager.ACTION_LIVE_WALLPAPER_CHOOSER)
-                startActivity(intent)
+                // بدل ما التطبيق ينهار → يطبع رسالة الخطأ
+                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
     }
