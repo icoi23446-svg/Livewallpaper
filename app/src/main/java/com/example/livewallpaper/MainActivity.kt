@@ -1,6 +1,6 @@
 package com.example.livewallpaper
 
-import android.app.WwallpaperManager
+import android.app.WallpaperManager
 import android.content.ComponentName
 import android.content.Intent
 import android.graphics.Color
@@ -39,9 +39,11 @@ class MainActivity : AppCompatActivity() {
         btnRandom = findViewById(R.id.btnRandom)
         tvInfo = findViewById(R.id.tvInfo)
 
+        // إعداد القائمة المنسدلة بالأنماط
         spinnerPattern.adapter =
             ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, patterns)
 
+        // زر لاختيار ألوان عشوائية
         btnRandom.setOnClickListener {
             val c1 = randomColor()
             val c2 = randomColor()
@@ -49,6 +51,7 @@ class MainActivity : AppCompatActivity() {
             etColor2.setText(colorToHex(c2))
         }
 
+        // زر تطبيق الإعدادات وتفعيل الخلفية الحية
         btnApply.setOnClickListener {
             val prefs = getSharedPreferences("live_prefs", MODE_PRIVATE).edit()
             prefs.putInt("pattern", spinnerPattern.selectedItemPosition)
