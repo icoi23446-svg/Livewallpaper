@@ -39,11 +39,11 @@ class MainActivity : AppCompatActivity() {
         btnRandom = findViewById(R.id.btnRandom)
         tvInfo = findViewById(R.id.tvInfo)
 
-        // إعداد القائمة المنسدلة بالأنماط
+        // إعداد القائمة المنسدلة
         spinnerPattern.adapter =
             ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, patterns)
 
-        // زر لاختيار ألوان عشوائية
+        // زر الألوان العشوائية
         btnRandom.setOnClickListener {
             val c1 = randomColor()
             val c2 = randomColor()
@@ -51,8 +51,9 @@ class MainActivity : AppCompatActivity() {
             etColor2.setText(colorToHex(c2))
         }
 
-        // زر تطبيق الإعدادات وتفعيل الخلفية الحية
+        // زر تطبيق الخلفية الحية
         btnApply.setOnClickListener {
+            // حفظ الإعدادات
             val prefs = getSharedPreferences("live_prefs", MODE_PRIVATE).edit()
             prefs.putInt("pattern", spinnerPattern.selectedItemPosition)
             prefs.putString("color1", etColor1.text.toString())
@@ -60,13 +61,20 @@ class MainActivity : AppCompatActivity() {
             prefs.putInt("speed", seekSpeed.progress)
             prefs.apply()
 
-            val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER).apply {
-                putExtra(
-                    WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-                    ComponentName(this@MainActivity, MultiEngineService::class.java)
-                )
+            try {
+                // المحاولة الأولى: فتح الخلفية مباشرة
+                val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER).apply {
+                    putExtra(
+                        WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
+                        ComponentName(this@MainActivity, MultiEngineService::class.java)
+                    )
+                }
+                startActivity(intent)
+            } catch (e: Exception) {
+                // لو فشلت: يفتح قائمة الخلفيات الحية
+                val intent = Intent(WallpaperManager.ACTION_LIVE_WALLPAPER_CHOOSER)
+                startActivity(intent)
             }
-            startActivity(intent)
         }
     }
 
