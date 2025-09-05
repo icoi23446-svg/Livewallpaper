@@ -1,4 +1,20 @@
 <resources>
     <string name="app_name">MultiPattern Live Wallpaper</string>
-    <string name="apply">Apply Live Wallpaper</string>
+    <string name="apply">تطبيق الخلفية</string>
+
+    <string-array name="colors_array">
+        <item>أحمر</item>
+        <item>أزرق</item>
+        <item>أخضر</item>
+        <item>أصفر</item>
+        <item>بنفسجي</item>
+    </string-array>
+
+    <string-array name="patterns_array">
+        <item>موجات</item>
+        <item>دوائر</item>
+        <item>نجوم</item>
+        <item>مربعات</item>
+        <item>نقاط</item>
+    </string-array>
 </resources>
