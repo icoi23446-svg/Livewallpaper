@@ -7,68 +7,33 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:gravity="center_horizontal">
+        android:padding="16dp">
 
-        <!-- اختيار اللون -->
+        <!-- عنوان -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="اختر اللون"
-            android:textSize="18sp"
+            android:text="⚙️ إعدادات الخلفية"
+            android:textSize="20sp"
+            android:textStyle="bold"
             android:padding="8dp"/>
-        <Spinner
-            android:id="@+id/colorSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:entries="@array/colors_array"/>
 
         <!-- اختيار النمط -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="اختر النمط"
-            android:textSize="18sp"
-            android:padding="8dp"/>
-        <Spinner
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:id="@+id/patternSpinner"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="اختر النمط"
             android:entries="@array/patterns_array"/>
 
-        <!-- اختيار الاتجاه -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="اتجاه الحركة"
-            android:textSize="18sp"
-            android:padding="8dp"/>
-        <Spinner
-            android:id="@+id/directionSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:entries="@array/direction_array"/>
-
-        <!-- اختيار التأثير -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="تأثير إضافي"
-            android:textSize="18sp"
-            android:padding="8dp"/>
-        <Spinner
-            android:id="@+id/effectsSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:entries="@array/effects_array"/>
-
-        <!-- التحكم في السرعة -->
+        <!-- سرعة -->
         <TextView
             android:id="@+id/speedLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="السرعة: 5"
-            android:padding="8dp"/>
+            android:paddingTop="16dp"/>
         <SeekBar
             android:id="@+id/speedSeekBar"
             android:layout_width="match_parent"
@@ -76,42 +41,13 @@
             android:max="10"
             android:progress="5"/>
 
-        <!-- التحكم في الحجم -->
-        <TextView
-            android:id="@+id/sizeLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="الحجم: 50"
-            android:padding="8dp"/>
-        <SeekBar
-            android:id="@+id/sizeSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="100"
-            android:progress="50"/>
-
-        <!-- التحكم في الكثافة -->
-        <TextView
-            android:id="@+id/densityLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="الكثافة: 5"
-            android:padding="8dp"/>
-        <SeekBar
-            android:id="@+id/densitySeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="10"
-            android:progress="5"/>
-
         <!-- زر التطبيق -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/applyButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/apply"
-            android:padding="16dp"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_marginTop="24dp"/>
-
     </LinearLayout>
 </ScrollView>
