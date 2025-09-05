@@ -1,87 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center_horizontal">
 
-    <LinearLayout 
-        android:orientation="vertical"
-        android:layout_width="match_parent" 
-        android:layout_height="wrap_content">
+    <!-- اختيار الألوان -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="اختر اللون"
+        android:textSize="18sp"
+        android:padding="8dp"/>
 
-        <TextView 
-            android:text="Choose pattern:" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"/>
+    <Spinner
+        android:id="@+id/colorSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/colors_array"/>
 
-        <Spinner 
-            android:id="@+id/spinnerPattern" 
-            android:layout_width="match_parent" 
-            android:layout_height="wrap_content"/>
+    <!-- اختيار الأنماط -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="اختر النمط"
+        android:textSize="18sp"
+        android:padding="8dp"/>
 
-        <TextView 
-            android:text="Speed:" 
-            android:layout_marginTop="12dp" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"/>
+    <Spinner
+        android:id="@+id/patternSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/patterns_array"/>
 
-        <SeekBar 
-            android:id="@+id/seekSpeed" 
-            android:layout_width="match_parent" 
-            android:layout_height="wrap_content" 
-            android:max="200"/>
+    <!-- سرعة الحركة -->
+    <SeekBar
+        android:id="@+id/speedSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="10"
+        android:progress="5"/>
 
-        <TextView 
-            android:text="Primary color (hex):" 
-            android:layout_marginTop="12dp" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/speedLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="السرعة: 5"/>
 
-        <EditText 
-            android:id="@+id/etColor1" 
-            android:layout_width="match_parent" 
-            android:layout_height="wrap_content" 
-            android:text="#FF6B6B"/>
+    <!-- زر التطبيق -->
+    <Button
+        android:id="@+id/applyButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/apply"
+        android:padding="16dp"
+        android:layout_marginTop="24dp"/>
 
-        <TextView 
-            android:text="Secondary color (hex):" 
-            android:layout_marginTop="12dp" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"/>
-
-        <EditText 
-            android:id="@+id/etColor2" 
-            android:layout_width="match_parent" 
-            android:layout_height="wrap_content" 
-            android:text="#5F27CD"/>
-
-        <LinearLayout 
-            android:orientation="horizontal" 
-            android:layout_width="match_parent" 
-            android:layout_height="wrap_content" 
-            android:layout_marginTop="16dp">
-
-            <Button 
-                android:id="@+id/btnApply" 
-                android:layout_width="0dp" 
-                android:layout_height="wrap_content" 
-                android:text="@string/app_name" 
-                android:layout_weight="1"/>
-
-            <Button 
-                android:id="@+id/btnRandom" 
-                android:layout_width="0dp" 
-                android:layout_height="wrap_content" 
-                android:text="Randomize" 
-                android:layout_weight="1" 
-                android:layout_marginStart="8dp"/>
-        </LinearLayout>
-
-        <TextView 
-            android:id="@+id/tvInfo" 
-            android:layout_marginTop="16dp" 
-            android:layout_width="match_parent" 
-            android:layout_height="wrap_content" 
-            android:text="Notes: install then choose Live Wallpaper -> MultiPattern."/>
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>
