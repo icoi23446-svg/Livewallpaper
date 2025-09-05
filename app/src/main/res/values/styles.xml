@@ -1,4 +1,6 @@
 <resources>
-    <style name="Theme.AppCompat.Light.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- الثيم الرئيسي للتطبيق -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- تقدر تضيف تخصيصات هنا -->
     </style>
 </resources>
