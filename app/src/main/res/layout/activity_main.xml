@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout 
+        android:orientation="vertical"
+        android:layout_width="match_parent" 
+        android:layout_height="wrap_content">
+
+        <TextView 
+            android:text="Choose pattern:" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"/>
+
+        <Spinner 
+            android:id="@+id/spinnerPattern" 
+            android:layout_width="match_parent" 
+            android:layout_height="wrap_content"/>
+
+        <TextView 
+            android:text="Speed:" 
+            android:layout_marginTop="12dp" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"/>
+
+        <SeekBar 
+            android:id="@+id/seekSpeed" 
+            android:layout_width="match_parent" 
+            android:layout_height="wrap_content" 
+            android:max="200"/>
+
+        <TextView 
+            android:text="Primary color (hex):" 
+            android:layout_marginTop="12dp" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"/>
+
+        <EditText 
+            android:id="@+id/etColor1" 
+            android:layout_width="match_parent" 
+            android:layout_height="wrap_content" 
+            android:text="#FF6B6B"/>
+
+        <TextView 
+            android:text="Secondary color (hex):" 
+            android:layout_marginTop="12dp" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"/>
+
+        <EditText 
+            android:id="@+id/etColor2" 
+            android:layout_width="match_parent" 
+            android:layout_height="wrap_content" 
+            android:text="#5F27CD"/>
+
+        <LinearLayout 
+            android:orientation="horizontal" 
+            android:layout_width="match_parent" 
+            android:layout_height="wrap_content" 
+            android:layout_marginTop="16dp">
+
+            <Button 
+                android:id="@+id/btnApply" 
+                android:layout_width="0dp" 
+                android:layout_height="wrap_content" 
+                android:text="@string/app_name" 
+                android:layout_weight="1"/>
+
+            <Button 
+                android:id="@+id/btnRandom" 
+                android:layout_width="0dp" 
+                android:layout_height="wrap_content" 
+                android:text="Randomize" 
+                android:layout_weight="1" 
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+        <TextView 
+            android:id="@+id/tvInfo" 
+            android:layout_marginTop="16dp" 
+            android:layout_width="match_parent" 
+            android:layout_height="wrap_content" 
+            android:text="Notes: install then choose Live Wallpaper -> MultiPattern."/>
+    </LinearLayout>
+</ScrollView>
