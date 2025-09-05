@@ -1,60 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:gravity="center_horizontal">
+    android:layout_height="match_parent">
 
-    <!-- اختيار الألوان -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="اختر اللون"
-        android:textSize="18sp"
-        android:padding="8dp"/>
-
-    <Spinner
-        android:id="@+id/colorSpinner"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/colors_array"/>
-
-    <!-- اختيار الأنماط -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="اختر النمط"
-        android:textSize="18sp"
-        android:padding="8dp"/>
-
-    <Spinner
-        android:id="@+id/patternSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:entries="@array/patterns_array"/>
-
-    <!-- سرعة الحركة -->
-    <SeekBar
-        android:id="@+id/speedSeekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="10"
-        android:progress="5"/>
-
-    <TextView
-        android:id="@+id/speedLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="السرعة: 5"/>
-
-    <!-- زر التطبيق -->
-    <Button
-        android:id="@+id/applyButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/apply"
+        android:orientation="vertical"
         android:padding="16dp"
-        android:layout_marginTop="24dp"/>
+        android:gravity="center_horizontal">
 
-</LinearLayout>
+        <!-- اختيار اللون -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="اختر اللون"
+            android:textSize="18sp"
+            android:padding="8dp"/>
+        <Spinner
+            android:id="@+id/colorSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/colors_array"/>
+
+        <!-- اختيار النمط -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="اختر النمط"
+            android:textSize="18sp"
+            android:padding="8dp"/>
+        <Spinner
+            android:id="@+id/patternSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/patterns_array"/>
+
+        <!-- اختيار الاتجاه -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="اتجاه الحركة"
+            android:textSize="18sp"
+            android:padding="8dp"/>
+        <Spinner
+            android:id="@+id/directionSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/direction_array"/>
+
+        <!-- اختيار التأثير -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="تأثير إضافي"
+            android:textSize="18sp"
+            android:padding="8dp"/>
+        <Spinner
+            android:id="@+id/effectsSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/effects_array"/>
+
+        <!-- التحكم في السرعة -->
+        <TextView
+            android:id="@+id/speedLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="السرعة: 5"
+            android:padding="8dp"/>
+        <SeekBar
+            android:id="@+id/speedSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="10"
+            android:progress="5"/>
+
+        <!-- التحكم في الحجم -->
+        <TextView
+            android:id="@+id/sizeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="الحجم: 50"
+            android:padding="8dp"/>
+        <SeekBar
+            android:id="@+id/sizeSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="50"/>
+
+        <!-- التحكم في الكثافة -->
+        <TextView
+            android:id="@+id/densityLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="الكثافة: 5"
+            android:padding="8dp"/>
+        <SeekBar
+            android:id="@+id/densitySeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="10"
+            android:progress="5"/>
+
+        <!-- زر التطبيق -->
+        <Button
+            android:id="@+id/applyButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/apply"
+            android:padding="16dp"
+            android:layout_marginTop="24dp"/>
+
+    </LinearLayout>
+</ScrollView>
