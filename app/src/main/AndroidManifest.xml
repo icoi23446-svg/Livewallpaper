@@ -1,4 +1,6 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.livewallpaper">
 
     <application
         android:allowBackup="true"
@@ -8,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
-        <!-- Main Activity (لازم يكون عندها exported=true) -->
+        <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
