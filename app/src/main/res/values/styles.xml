@@ -1,17 +1,11 @@
 <resources>
-
-    <!-- الثيم الأساسي للتطبيق -->
     <style name="Theme.UltimateLiveWallpaper" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- الألوان الأساسية -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@android:color/white</item>
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@android:color/black</item>
-
-        <!-- لون الخلفية -->
-        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowBackground">@color/white</item>
     </style>
-
 </resources>
