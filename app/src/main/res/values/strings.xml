@@ -1,11 +1,12 @@
 <resources>
-    <style name="Theme.UltimateLiveWallpaper" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@android:color/white</item>
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@android:color/black</item>
-        <item name="android:windowBackground">@color/white</item>
-    </style>
+    <string name="app_name">Ultimate Live Wallpaper</string>
+    <string name="apply">تطبيق الخلفية</string>
+
+    <!-- أنماط جميلة -->
+    <string-array name="patterns_array">
+        <item>Animated Gradient</item>
+        <item>Color Cycle</item>
+        <item>Particles</item>
+        <item>Waves</item>
+    </string-array>
 </resources>
