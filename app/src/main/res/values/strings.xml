@@ -1,24 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- اسم التطبيق -->
     <string name="app_name">Ultimate Live Wallpaper</string>
     <string name="apply">تطبيق الخلفية</string>
-
-    <!-- التسميات -->
-    <string name="pattern_label">النمط</string>
-    <string name="color_label">اللون</string>
-    <string name="direction_label">الاتجاه</string>
-    <string name="effect_label">التأثير</string>
-    <string name="theme_label">الثيم</string>
-    <string name="speed_label">السرعة</string>
-    <string name="size_label">الحجم</string>
-    <string name="density_label">الكثافة</string>
-
-    <!-- الأنماط -->
-    <string-array name="patterns_array">
-        <item>Animated Gradient</item>
-        <item>Color Cycle</item>
-        <item>Particles</item>
-        <item>Waves</item>
-    </string-array>
 
     <!-- الألوان -->
     <string-array name="colors_array">
@@ -31,12 +15,29 @@
         <item>عشوائي</item>
     </string-array>
 
+    <!-- الأنماط -->
+    <string-array name="patterns_array">
+        <item>تدرج لوني</item>
+        <item>تغير لون</item>
+        <item>جسيمات</item>
+        <item>موجات</item>
+    </string-array>
+
+    <!-- السرعة -->
+    <string name="speed_label">السرعة</string>
+
+    <!-- الحجم -->
+    <string name="size_label">الحجم</string>
+
+    <!-- الكثافة -->
+    <string name="density_label">الكثافة</string>
+
     <!-- الاتجاهات -->
     <string-array name="direction_array">
-        <item>يمين</item>
-        <item>يسار</item>
         <item>أعلى</item>
         <item>أسفل</item>
+        <item>يمين</item>
+        <item>يسار</item>
     </string-array>
 
     <!-- التأثيرات -->
@@ -45,12 +46,5 @@
         <item>وميض</item>
         <item>دوران</item>
         <item>شفافية</item>
-    </string-array>
-
-    <!-- الثيم -->
-    <string-array name="theme_array">
-        <item>تلقائي</item>
-        <item>فاتح</item>
-        <item>ليلي</item>
     </string-array>
 </resources>
