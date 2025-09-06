@@ -2,35 +2,23 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_light">
+    android:padding="16dp">
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <!-- عنوان التطبيق -->
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/teal_700"
-            android:layout_gravity="center_horizontal"
-            android:paddingBottom="16dp" />
+        android:gravity="center_horizontal"
+        android:spacing="12dp">
 
         <!-- اختيار النمط -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="اختر النمط:"
-            android:textStyle="bold"
-            android:paddingTop="8dp"/>
+            android:text="النمط"
+            android:textStyle="bold"/>
         <Spinner
-            android:id="@+id/patternSpinner"
+            android:id="@+id/spinnerPattern"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
@@ -38,11 +26,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="اختر اللون:"
-            android:textStyle="bold"
-            android:paddingTop="8dp"/>
+            android:text="اللون"
+            android:textStyle="bold"/>
         <Spinner
-            android:id="@+id/colorSpinner"
+            android:id="@+id/spinnerColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
@@ -50,11 +37,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="الاتجاه:"
-            android:textStyle="bold"
-            android:paddingTop="8dp"/>
+            android:text="الاتجاه"
+            android:textStyle="bold"/>
         <Spinner
-            android:id="@+id/directionSpinner"
+            android:id="@+id/spinnerDirection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
@@ -62,61 +48,53 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="التأثير:"
-            android:textStyle="bold"
-            android:paddingTop="8dp"/>
+            android:text="التأثير"
+            android:textStyle="bold"/>
         <Spinner
-            android:id="@+id/effectSpinner"
+            android:id="@+id/spinnerEffect"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <!-- شريط سرعة -->
+        <!-- التحكم في السرعة -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="السرعة:"
-            android:textStyle="bold"
-            android:paddingTop="8dp"/>
+            android:text="السرعة"/>
         <SeekBar
-            android:id="@+id/speedSeekBar"
+            android:id="@+id/seekSpeed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:max="10"/>
 
-        <!-- شريط الحجم -->
+        <!-- التحكم في الحجم -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="الحجم:"
-            android:textStyle="bold"
-            android:paddingTop="8dp"/>
+            android:text="الحجم"/>
         <SeekBar
-            android:id="@+id/sizeSeekBar"
+            android:id="@+id/seekSize"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:max="100"/>
 
-        <!-- شريط الكثافة -->
+        <!-- التحكم في الكثافة -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="الكثافة:"
-            android:textStyle="bold"
-            android:paddingTop="8dp"/>
+            android:text="الكثافة"/>
         <SeekBar
-            android:id="@+id/densitySeekBar"
+            android:id="@+id/seekDensity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:max="10"/>
 
-        <!-- زر التطبيق -->
+        <!-- زر تطبيق الخلفية -->
         <Button
-            android:id="@+id/applyButton"
-            android:layout_width="match_parent"
+            android:id="@+id/btnApply"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/apply"
-            android:backgroundTint="@color/teal_700"
-            android:textColor="@color/white"
+            android:text="تطبيق الخلفية"
+            android:padding="12dp"
             android:layout_marginTop="16dp"/>
 
     </LinearLayout>
