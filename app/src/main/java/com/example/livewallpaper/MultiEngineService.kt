@@ -18,10 +18,8 @@ class MultiEngineService : WallpaperService() {
         private var running = false
         private var angle = 0f
         private var hueShift = 0f
-        private var particles: MutableList<Particle> = mutableListOf()
-
-        // القيم السابقة عشان نعرف إذا نعيد تهيئة الجسيمات
         private var lastPattern = ""
+        private var particles: MutableList<Particle> = mutableListOf()
         private var lastDensity = -1
         private var lastSize = -1
 
@@ -33,8 +31,11 @@ class MultiEngineService : WallpaperService() {
 
         override fun onVisibilityChanged(visible: Boolean) {
             running = visible
-            if (visible) handler.post(drawRunner)
-            else handler.removeCallbacks(drawRunner)
+            if (visible) {
+                handler.post(drawRunner)
+            } else {
+                handler.removeCallbacks(drawRunner)
+            }
         }
 
         override fun onSurfaceDestroyed(holder: SurfaceHolder) {
@@ -49,7 +50,7 @@ class MultiEngineService : WallpaperService() {
         }
 
         private fun drawFrame() {
-            val holder = surfaceHolder
+            val holder: SurfaceHolder = surfaceHolder
             var canvas: Canvas? = null
             try {
                 canvas = holder.lockCanvas()
@@ -64,68 +65,83 @@ class MultiEngineService : WallpaperService() {
                 val colorName = prefs.getString("color", "أزرق") ?: "أزرق"
                 val effect = prefs.getString("effect", "بدون") ?: "بدون"
                 val direction = prefs.getString("direction", "يمين") ?: "يمين"
-                val speed = prefs.getInt("speed", 5)
-                val size = prefs.getInt("size", 50)
-                val density = prefs.getInt("density", 5)
+                val speedProgress = prefs.getInt("speed", 5)
+                val sizeProgress = prefs.getInt("size", 50)
+                val densityProgress = prefs.getInt("density", 5)
 
                 val w = canvas.width
                 val h = canvas.height
                 val cx = w / 2f
                 val cy = h / 2f
 
-                // Map سرعة 0..10 إلى FPS (8..60)
-                val fps = (8 + speed.coerceIn(0, 10) * 5)
+                // FPS من السرعة
+                val fps = (8 + (speedProgress.coerceIn(0, 10) * 5))
                 val frameDelay = max(16L, (1000L / fps))
 
+                // اللون الأساسي
                 val baseColor = colorFromName(colorName)
 
-                // تحديث زوايا/ألوان متحركة
-                angle += 0.02f * (speed + 1)
-                hueShift = (hueShift + 0.3f * (speed + 1)) % 360f
+                // تحديث حركة
+                angle += 0.02f * (speedProgress.coerceIn(0, 10) + 1)
+                hueShift = (hueShift + 0.3f * (speedProgress.coerceIn(0, 10) + 1)) % 360f
 
-                // إعادة تهيئة الجسيمات لو تغير النمط أو الإعدادات
-                if (pattern != lastPattern || density != lastDensity || size != lastSize) {
-                    initParticlesIfNeeded(pattern, density, size, w, h)
+                // إعادة تهيئة الجسيمات لو تغير شيء
+                if (pattern != lastPattern || densityProgress != lastDensity || sizeProgress != lastSize) {
+                    initParticlesIfNeeded(pattern, densityProgress, sizeProgress, w, h)
                     lastPattern = pattern
-                    lastDensity = density
-                    lastSize = size
+                    lastDensity = densityProgress
+                    lastSize = sizeProgress
                 }
 
-                // تأثير دوران (Rotate)
-                val doRotate = (effect == "دوران" || effect.equals("Rotate", true))
+                // تأثير دوران
+                val doRotate = effect == "دوران" || effect == "Rotate"
                 if (doRotate) {
                     canvas.save()
                     val rotateDeg = (angle * 10f) % 360f
                     canvas.rotate(rotateDeg, cx, cy)
                 }
 
-                // اختيارات النمط
+                // رسم حسب النمط
                 when (pattern) {
-                    "Animated Gradient", "تدرج لوني" -> drawAnimatedGradient(canvas, w, h, hueShift)
-                    "Color Cycle", "تغير لون" -> drawColorCycle(canvas, angle)
-                    "Particles", "جسيمات" -> drawParticles(canvas, w, h, baseColor, size, density, direction, effect, angle)
-                    "Waves", "موجات" -> drawWaves(canvas, w, h, baseColor, size, density, direction, effect, angle)
-                    else -> drawAnimatedGradient(canvas, w, h, hueShift)
+                    "Animated Gradient", "تدرج لوني", "Gradient" -> {
+                        drawAnimatedGradient(canvas, w, h, hueShift)
+                    }
+                    "Color Cycle", "تغير لون" -> {
+                        drawColorCycle(canvas, w, h, angle)
+                    }
+                    "Particles", "جسيمات" -> {
+                        drawParticles(canvas, w, h, baseColor, sizeProgress, densityProgress, direction, effect, angle)
+                    }
+                    "Waves", "موجات" -> {
+                        drawWaves(canvas, w, h, baseColor, sizeProgress, densityProgress, direction, effect, angle)
+                    }
+                    else -> {
+                        drawAnimatedGradient(canvas, w, h, hueShift)
+                    }
                 }
 
-                if (doRotate) canvas.restore()
+                if (doRotate) {
+                    canvas.restore()
+                }
 
-                // جدولة الإطار التالي
+                paint.shader = null
                 scheduleNext(frameDelay)
 
             } finally {
-                if (canvas != null) try { holder.unlockCanvasAndPost(canvas) } catch (_: Exception) {}
+                if (canvas != null) {
+                    try { holder.unlockCanvasAndPost(canvas) } catch (_: Exception) {}
+                }
             }
         }
 
-        private fun scheduleNext(delay: Long) {
+        private fun scheduleNext(delayMs: Long) {
             if (running) {
                 handler.removeCallbacks(drawRunner)
-                handler.postDelayed(drawRunner, delay)
+                handler.postDelayed(drawRunner, delayMs)
             }
         }
 
-        // ========== أنماط الرسم ==========
+        // -------- أنماط الرسم --------
         private fun drawAnimatedGradient(canvas: Canvas, w: Int, h: Int, hueShift: Float) {
             val colors = IntArray(5) { i ->
                 val hue = (hueShift + i * 72f) % 360f
@@ -137,17 +153,26 @@ class MultiEngineService : WallpaperService() {
             paint.shader = null
         }
 
-        private fun drawColorCycle(canvas: Canvas, angle: Float) {
+        private fun drawColorCycle(canvas: Canvas, w: Int, h: Int, angle: Float) {
             val hue = (angle * 20f) % 360f
             val color = Color.HSVToColor(floatArrayOf(hue, 0.85f, 1f))
             canvas.drawColor(color)
         }
 
-        private fun drawParticles(canvas: Canvas, w: Int, h: Int, baseColor: Int,
-                                  size: Int, density: Int, direction: String, effect: String, angle: Float) {
+        private fun drawParticles(
+            canvas: Canvas,
+            w: Int,
+            h: Int,
+            baseColor: Int,
+            sizeProgress: Int,
+            densityProgress: Int,
+            direction: String,
+            effect: String,
+            angle: Float
+        ) {
             canvas.drawColor(Color.BLACK)
             paint.style = Paint.Style.FILL
-            val baseRadius = (4f + size / 10f).coerceAtLeast(1f)
+            val baseRadius = (4f + sizeProgress / 10f).coerceAtLeast(1f)
 
             val dxDir = when (direction) {
                 "يمين", "Right" -> 1f
@@ -161,11 +186,11 @@ class MultiEngineService : WallpaperService() {
             }
 
             for ((i, p) in particles.withIndex()) {
-                p.x += p.vx + dxDir * 0.2f * (density + 1)
-                p.y += p.vy + dyDir * 0.2f * (density + 1)
+                p.x += p.vx + dxDir * (0.2f * (densityProgress + 1))
+                p.y += p.vy + dyDir * (0.2f * (densityProgress + 1))
 
-                p.x += sin((angle + i) * 0.02f) * (1 + size / 40f)
-                p.y += cos((angle + i) * 0.02f) * (1 + size / 40f)
+                p.x += sin((angle + i) * 0.02f) * (1 + sizeProgress / 40f)
+                p.y += cos((angle + i) * 0.02f) * (1 + sizeProgress / 40f)
 
                 if (p.x < -50) p.x = w + 50f
                 if (p.x > w + 50) p.x = -50f
@@ -173,15 +198,15 @@ class MultiEngineService : WallpaperService() {
                 if (p.y > h + 50) p.y = -50f
 
                 val hue = (hueShift + i * 3) % 360
-                val particleColor = if (baseColor != Color.TRANSPARENT)
-                    baseColor else Color.HSVToColor(floatArrayOf(hue, 0.8f, 1f))
+                val particleColor = if (baseColor != Color.TRANSPARENT) baseColor else Color.HSVToColor(floatArrayOf(hue, 0.8f, 1f))
                 paint.color = particleColor
 
-                paint.alpha = when (effect) {
+                val alpha = when (effect) {
                     "وميض", "Pulse" -> ((128 + 127 * sin(angle + i)).roundToInt()).coerceIn(30, 255)
                     "شفافية", "Transparency" -> 90
                     else -> 255
                 }
+                paint.alpha = alpha
 
                 val radius = baseRadius + (if (effect == "وميض" || effect == "Pulse") abs(sin(angle + i)) * baseRadius else 0f)
 
@@ -189,16 +214,25 @@ class MultiEngineService : WallpaperService() {
             }
         }
 
-        private fun drawWaves(canvas: Canvas, w: Int, h: Int, baseColor: Int,
-                              size: Int, density: Int, direction: String, effect: String, angle: Float) {
+        private fun drawWaves(
+            canvas: Canvas,
+            w: Int,
+            h: Int,
+            baseColor: Int,
+            sizeProgress: Int,
+            densityProgress: Int,
+            direction: String,
+            effect: String,
+            angle: Float
+        ) {
             canvas.drawColor(Color.BLACK)
             paint.style = Paint.Style.STROKE
-            paint.strokeWidth = max(1f, size / 8f)
+            paint.strokeWidth = max(1f, sizeProgress / 8f)
             paint.color = baseColor
             paint.alpha = if (effect == "شفافية" || effect == "Transparency") 130 else 255
 
-            val waves = (1 + density).coerceAtMost(8)
-            val amplitude = 30f + size.toFloat()
+            val waves = (1 + densityProgress).coerceAtMost(8)
+            val amplitude = 30f + sizeProgress.toFloat()
             val step = 10
 
             for (wIndex in 0 until waves) {
@@ -207,44 +241,63 @@ class MultiEngineService : WallpaperService() {
                 var first = true
                 for (x in 0 until w step step) {
                     val fx = x.toFloat()
-                    val y = (h / 2f + sin((x * 0.02f) + phase) * (amplitude + wIndex * 8))
+                    val y = (h / 2f + sin((x * 0.02f) + phase) * (amplitude + wIndex * 8)).toFloat()
                     if (first) {
-                        path.moveTo(fx, y.toFloat())
+                        path.moveTo(fx, y)
                         first = false
-                    } else path.lineTo(fx, y.toFloat())
+                    } else {
+                        path.lineTo(fx, y)
+                    }
                 }
                 canvas.drawPath(path, paint)
             }
+
+            if (effect == "وميض" || effect == "Pulse") {
+                paint.style = Paint.Style.FILL
+                val count = 20 + densityProgress * 10
+                for (i in 0 until count) {
+                    val x = Random.nextInt(w).toFloat()
+                    val y = (h / 2f + sin((i + angle) * 0.1f) * (amplitude + i % 10)).toFloat()
+                    paint.alpha = ((128 + 127 * sin(angle + i)).toInt()).coerceIn(20, 255)
+                    canvas.drawCircle(x, y, (sizeProgress / 25f + 2f).coerceAtLeast(1f), paint)
+                }
+            }
         }
 
-        // ========== الجسيمات ==========
         private fun initParticlesIfNeeded(pattern: String, density: Int, size: Int, w: Int, h: Int) {
-            if (pattern.equals("Particles", true) || pattern == "جسيمات") {
+            if (pattern.startsWith("Particles", true) || pattern == "Particles" || pattern == "جسيمات") {
                 val count = (10 + density * 30).coerceAtMost(800)
                 if (particles.size != count || lastSize != size) {
                     particles = MutableList(count) { Particle.random(w, h, size) }
                 }
-            } else particles.clear()
+            } else {
+                if (particles.size > 0) {
+                    particles.clear()
+                }
+            }
         }
 
-        private fun colorFromName(name: String): Int = when (name.lowercase()) {
-            "أحمر", "red" -> Color.RED
-            "أخضر", "green" -> Color.GREEN
-            "أصفر", "yellow" -> Color.YELLOW
-            "بنفسجي", "purple" -> Color.MAGENTA
-            "سماوي", "cyan" -> Color.CYAN
-            "أزرق", "blue" -> Color.BLUE
-            "عشوائي", "random" -> Color.TRANSPARENT
-            else -> Color.BLUE
+        private fun colorFromName(name: String): Int {
+            return when (name.lowercase()) {
+                "أحمر", "red" -> Color.RED
+                "أخضر", "green" -> Color.GREEN
+                "أصفر", "yellow" -> Color.YELLOW
+                "بنفسجي", "purple" -> Color.MAGENTA
+                "سماوي", "cyan" -> Color.CYAN
+                "أزرق", "blue" -> Color.BLUE
+                "عشوائي", "random" -> Color.TRANSPARENT
+                else -> Color.BLUE
+            }
         }
 
-        data class Particle(var x: Float, var y: Float, var vx: Float, var vy: Float) {
+        // ------- كلاس Particle مصحح -------
+        private data class Particle(var x: Float, var y: Float, var vx: Float, var vy: Float) {
             companion object {
-                fun random(w: Int, h: Int, size: Int): Particle {
+                fun random(w: Int, h: Int, sizeProgress: Int): Particle {
                     val rnd = Random
                     val x = rnd.nextInt(max(1, w)).toFloat()
                     val y = rnd.nextInt(max(1, h)).toFloat()
-                    val speedFactor = 0.3f + size / 80f
+                    val speedFactor = 0.3f + sizeProgress / 80f
                     val vx = (rnd.nextFloat() - 0.5f) * 2f * speedFactor
                     val vy = (rnd.nextFloat() - 0.5f) * 2f * speedFactor
                     return Particle(x, y, vx, vy)
