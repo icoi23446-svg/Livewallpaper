@@ -1,5 +1,7 @@
 package com.example.livewallpaper
 
+import android.app.WallpaperManager
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.*
@@ -15,111 +17,60 @@ class MainActivity : AppCompatActivity() {
 
         prefs = getSharedPreferences("WallpaperSettings", MODE_PRIVATE)
 
-        // === عناصر الواجهة ===
-        val patternSpinner = findViewById<Spinner>(R.id.spinnerPattern)
-        val colorSpinner = findViewById<Spinner>(R.id.spinnerColor)
-        val directionSpinner = findViewById<Spinner>(R.id.spinnerDirection)
-        val effectSpinner = findViewById<Spinner>(R.id.spinnerEffect)
+        // عناصر الواجهة
+        val spinnerPattern: Spinner = findViewById(R.id.spinnerPattern)
+        val spinnerColor: Spinner = findViewById(R.id.spinnerColor)
+        val spinnerDirection: Spinner = findViewById(R.id.spinnerDirection)
+        val spinnerEffect: Spinner = findViewById(R.id.spinnerEffect)
 
-        val speedSeek = findViewById<SeekBar>(R.id.seekSpeed)
-        val sizeSeek = findViewById<SeekBar>(R.id.seekSize)
-        val densitySeek = findViewById<SeekBar>(R.id.seekDensity)
+        val seekBarSpeed: SeekBar = findViewById(R.id.seekBarSpeed)
+        val seekBarSize: SeekBar = findViewById(R.id.seekBarSize)
+        val seekBarDensity: SeekBar = findViewById(R.id.seekBarDensity)
 
-        // === إعداد الـ Spinners بالقيم ===
-        patternSpinner.adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_spinner_dropdown_item,
-            listOf("Animated Gradient", "Color Cycle", "Particles", "Waves")
-        )
+        val btnApply: Button = findViewById(R.id.btnApply)
 
-        colorSpinner.adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_spinner_dropdown_item,
-            listOf("أزرق", "أحمر", "أخضر", "أصفر", "بنفسجي", "سماوي", "عشوائي")
-        )
+        // استرجاع القيم القديمة
+        spinnerPattern.setSelection(getIndex(spinnerPattern, prefs.getString("pattern", "Animated Gradient")!!))
+        spinnerColor.setSelection(getIndex(spinnerColor, prefs.getString("color", "أزرق")!!))
+        spinnerDirection.setSelection(getIndex(spinnerDirection, prefs.getString("direction", "يمين")!!))
+        spinnerEffect.setSelection(getIndex(spinnerEffect, prefs.getString("effect", "بدون")!!))
 
-        directionSpinner.adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_spinner_dropdown_item,
-            listOf("يمين", "يسار", "أعلى", "أسفل")
-        )
+        seekBarSpeed.progress = prefs.getInt("speed", 5)
+        seekBarSize.progress = prefs.getInt("size", 50)
+        seekBarDensity.progress = prefs.getInt("density", 5)
 
-        effectSpinner.adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_spinner_dropdown_item,
-            listOf("بدون", "وميض", "دوران", "شفافية")
-        )
+        // عند الضغط على زر "تطبيق"
+        btnApply.setOnClickListener {
+            val editor = prefs.edit()
+            editor.putString("pattern", spinnerPattern.selectedItem.toString())
+            editor.putString("color", spinnerColor.selectedItem.toString())
+            editor.putString("direction", spinnerDirection.selectedItem.toString())
+            editor.putString("effect", spinnerEffect.selectedItem.toString())
+            editor.putInt("speed", seekBarSpeed.progress)
+            editor.putInt("size", seekBarSize.progress)
+            editor.putInt("density", seekBarDensity.progress)
+            editor.apply()
 
-        // === حدود الـ SeekBars ===
-        speedSeek.max = 10
-        sizeSeek.max = 100
-        densitySeek.max = 10
-
-        // === تحميل القيم المحفوظة (عند فتح التطبيق) ===
-        patternSpinner.setSelection(
-            (patternSpinner.adapter as ArrayAdapter<String>).getPosition(
-                prefs.getString("pattern", "Animated Gradient")
-            )
-        )
-        colorSpinner.setSelection(
-            (colorSpinner.adapter as ArrayAdapter<String>).getPosition(
-                prefs.getString("color", "أزرق")
-            )
-        )
-        directionSpinner.setSelection(
-            (directionSpinner.adapter as ArrayAdapter<String>).getPosition(
-                prefs.getString("direction", "يمين")
-            )
-        )
-        effectSpinner.setSelection(
-            (effectSpinner.adapter as ArrayAdapter<String>).getPosition(
-                prefs.getString("effect", "بدون")
-            )
-        )
-
-        speedSeek.progress = prefs.getInt("speed", 5)
-        sizeSeek.progress = prefs.getInt("size", 50)
-        densitySeek.progress = prefs.getInt("density", 5)
-
-        // === حفظ التغييرات عند تغيير المستخدم ===
-        patternSpinner.onItemSelectedListener = simpleSave { value ->
-            prefs.edit().putString("pattern", value).apply()
+            // شغّل شاشة تعيين الخلفية الحية
+            try {
+                val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER).apply {
+                    putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
+                        android.content.ComponentName(this@MainActivity, MultiEngineService::class.java))
+                }
+                startActivity(intent)
+            } catch (e: Exception) {
+                Toast.makeText(this, "لم يتم دعم الخلفيات الحية على هذا الجهاز", Toast.LENGTH_LONG).show()
+            }
         }
-        colorSpinner.onItemSelectedListener = simpleSave { value ->
-            prefs.edit().putString("color", value).apply()
-        }
-        directionSpinner.onItemSelectedListener = simpleSave { value ->
-            prefs.edit().putString("direction", value).apply()
-        }
-        effectSpinner.onItemSelectedListener = simpleSave { value ->
-            prefs.edit().putString("effect", value).apply()
-        }
-
-        speedSeek.setOnSeekBarChangeListener(saveInt("speed"))
-        sizeSeek.setOnSeekBarChangeListener(saveInt("size"))
-        densitySeek.setOnSeekBarChangeListener(saveInt("density"))
     }
 
-    // Listener مبسط لحفظ النصوص من Spinners
-    private fun simpleSave(save: (String) -> Unit) = object : AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(
-            parent: AdapterView<*>?, view: android.view.View?,
-            position: Int, id: Long
-        ) {
-            val value = parent?.getItemAtPosition(position).toString()
-            save(value)
+    // دالة مساعدة لاسترجاع index العنصر
+    private fun getIndex(spinner: Spinner, value: String): Int {
+        for (i in 0 until spinner.count) {
+            if (spinner.getItemAtPosition(i).toString().equals(value, ignoreCase = true)) {
+                return i
+            }
         }
-
-        override fun onNothingSelected(parent: AdapterView<*>?) {}
-    }
-
-    // Listener مبسط لحفظ الأرقام من SeekBars
-    private fun saveInt(key: String) = object : SeekBar.OnSeekBarChangeListener {
-        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-            prefs.edit().putInt(key, progress).apply()
-        }
-
-        override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-        override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        return 0
     }
 }
