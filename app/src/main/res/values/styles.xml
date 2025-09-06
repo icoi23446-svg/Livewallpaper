@@ -1,5 +1,4 @@
 <resources>
-
     <!-- الثيم الرئيسي للتطبيق -->
     <style name="Theme.UltimateLiveWallpaper" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- ألوان أساسية -->
@@ -8,5 +7,4 @@
         <item name="colorOnPrimary">@android:color/white</item>
         <item name="android:windowBackground">@android:color/black</item>
     </style>
-
 </resources>
