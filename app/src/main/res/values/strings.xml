@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Ultimate Live Wallpaper</string>
-    <string name="apply">تطبيق</string>
+    <string name="app_name">الخلفية الحية</string>
+    <string name="apply">تعيين</string>
+    <string name="pattern">النمط</string>
+    <string name="color">اللون</string>
+    <string name="speed">السرعة</string>
 
     <!-- الأنماط -->
     <string-array name="patterns">
@@ -18,21 +21,5 @@
         <item>بنفسجي</item>
         <item>سماوي</item>
         <item>عشوائي</item>
-    </string-array>
-
-    <!-- الاتجاهات -->
-    <string-array name="directions">
-        <item>يمين</item>
-        <item>يسار</item>
-        <item>أعلى</item>
-        <item>أسفل</item>
-    </string-array>
-
-    <!-- التأثيرات -->
-    <string-array name="effects">
-        <item>بدون</item>
-        <item>وميض</item>
-        <item>دوران</item>
-        <item>شفافية</item>
     </string-array>
 </resources>
