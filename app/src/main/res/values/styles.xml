@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- الثيم الرئيسي للتطبيق (موجود مرة واحدة فقط هنا) -->
-    <style name="Theme.UltimateLiveWallpaper" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <!-- ثيم فاتح وبسيط عشان النصوص والعناصر تبان -->
+    <style name="Theme.UltimateLiveWallpaper" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/teal_700</item>
-        <item name="colorPrimaryVariant">@color/teal_200</item>
-        <item name="colorOnPrimary">@android:color/white</item>
-        <item name="android:windowBackground">@android:color/black</item>
+        <item name="colorPrimaryContainer">@color/teal_200</item>
+
+        <!-- خلي خلفية النوافذ فاتحة والنص داكن -->
+        <item name="android:windowBackground">@color/gray_light</item>
+        <item name="android:textColor">@color/gray_dark</item>
+
+        <!-- شريط الحالة والتنقل متناسقين -->
+        <item name="android:statusBarColor">@color/gray_light</item>
+        <item name="android:navigationBarColor">@color/gray_light</item>
     </style>
 </resources>
