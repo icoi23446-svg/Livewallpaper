@@ -1,11 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- اسم التطبيق -->
     <string name="app_name">Ultimate Live Wallpaper</string>
 
-    <string name="pattern">النمط</string>
-    <string name="color">اللون</string>
-    <string name="speed">السرعة</string>
-    <string name="size">الحجم</string>
-    <string name="density">الكثافة</string>
-    <string name="direction">الاتجاه</string>
-    <string name="effect">التأثير</string>
+    <!-- العناوين في الواجهة -->
+    <string name="label_pattern">النمط</string>
+    <string name="label_color">اللون</string>
+    <string name="label_direction">الاتجاه</string>
+    <string name="label_effect">التأثير</string>
+    <string name="label_speed">السرعة</string>
+    <string name="label_size">الحجم</string>
+    <string name="label_density">الكثافة</string>
+
+    <!-- القيم الخاصة بالخيارات -->
+    <!-- الأنماط -->
+    <string name="pattern_gradient">Animated Gradient</string>
+    <string name="pattern_colorcycle">Color Cycle</string>
+    <string name="pattern_particles">Particles</string>
+    <string name="pattern_waves">Waves</string>
+
+    <!-- الألوان -->
+    <string name="color_red">أحمر</string>
+    <string name="color_blue">أزرق</string>
+    <string name="color_green">أخضر</string>
+    <string name="color_yellow">أصفر</string>
+    <string name="color_purple">بنفسجي</string>
+    <string name="color_cyan">سماوي</string>
+    <string name="color_random">عشوائي</string>
+
+    <!-- الاتجاهات -->
+    <string name="direction_right">يمين</string>
+    <string name="direction_left">يسار</string>
+    <string name="direction_up">أعلى</string>
+    <string name="direction_down">أسفل</string>
+
+    <!-- التأثيرات -->
+    <string name="effect_none">بدون</string>
+    <string name="effect_pulse">وميض</string>
+    <string name="effect_rotate">دوران</string>
+    <string name="effect_transparency">شفافية</string>
 </resources>
