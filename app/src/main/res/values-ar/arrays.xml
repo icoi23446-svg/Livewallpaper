@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- خيارات الألوان -->
+    <string-array name="colors">
+        <item>أحمر</item>
+        <item>أخضر</item>
+        <item>أزرق</item>
+        <item>أصفر</item>
+        <item>بنفسجي</item>
+        <item>أبيض</item>
+        <item>أسود</item>
+    </string-array>
+
+    <!-- خيارات الأنماط -->
+    <string-array name="patterns">
+        <item>خطوط</item>
+        <item>دوائر</item>
+        <item>أمواج</item>
+        <item>نجوم</item>
+        <item>شبكة</item>
+    </string-array>
+
+    <!-- خيارات السرعة -->
+    <string-array name="speeds">
+        <item>بطيء</item>
+        <item>عادي</item>
+        <item>سريع</item>
+    </string-array>
+</resources>
