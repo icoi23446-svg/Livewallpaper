@@ -25,5 +25,5 @@ jobs:
         with:
           gradle-version: 8.6
 
-      - name: Build with Gradle
-        run: ./gradlew assembleDebug
+      - name: Build with Gradle 8.6
+        run: gradle assembleDebug
