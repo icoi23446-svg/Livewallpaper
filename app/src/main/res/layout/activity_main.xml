@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:spacing="12dp">
+        android:spacing="8dp">
 
         <!-- اختيار النمط -->
         <TextView
@@ -18,9 +18,10 @@
             android:text="النمط"
             android:textStyle="bold"/>
         <Spinner
-            android:id="@+id/spinnerPattern"
+            android:id="@+id/patternSpinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:entries="@array/patterns_array"/>
 
         <!-- اختيار اللون -->
         <TextView
@@ -29,9 +30,10 @@
             android:text="اللون"
             android:textStyle="bold"/>
         <Spinner
-            android:id="@+id/spinnerColor"
+            android:id="@+id/colorSpinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:entries="@array/colors_array"/>
 
         <!-- اختيار الاتجاه -->
         <TextView
@@ -40,9 +42,10 @@
             android:text="الاتجاه"
             android:textStyle="bold"/>
         <Spinner
-            android:id="@+id/spinnerDirection"
+            android:id="@+id/directionSpinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:entries="@array/direction_array"/>
 
         <!-- اختيار التأثير -->
         <TextView
@@ -51,51 +54,54 @@
             android:text="التأثير"
             android:textStyle="bold"/>
         <Spinner
-            android:id="@+id/spinnerEffect"
+            android:id="@+id/effectSpinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:entries="@array/effects_array"/>
 
-        <!-- التحكم في السرعة -->
+        <!-- شريط السرعة -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="السرعة"/>
+            android:text="@string/speed_label"
+            android:textStyle="bold"/>
         <SeekBar
-            android:id="@+id/seekSpeed"
+            android:id="@+id/speedSeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:max="10"/>
 
-        <!-- التحكم في الحجم -->
+        <!-- شريط الحجم -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="الحجم"/>
+            android:text="@string/size_label"
+            android:textStyle="bold"/>
         <SeekBar
-            android:id="@+id/seekSize"
+            android:id="@+id/sizeSeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:max="100"/>
 
-        <!-- التحكم في الكثافة -->
+        <!-- شريط الكثافة -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="الكثافة"/>
+            android:text="@string/density_label"
+            android:textStyle="bold"/>
         <SeekBar
-            android:id="@+id/seekDensity"
+            android:id="@+id/densitySeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:max="10"/>
 
-        <!-- زر تطبيق الخلفية -->
+        <!-- زر التطبيق -->
         <Button
-            android:id="@+id/btnApply"
+            android:id="@+id/applyButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="تطبيق الخلفية"
+            android:text="@string/apply"
             android:padding="12dp"
-            android:layout_marginTop="16dp"/>
-
+            android:layout_marginTop="20dp"/>
     </LinearLayout>
 </ScrollView>
