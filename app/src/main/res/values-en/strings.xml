@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Live Wallpaper</string>
+    <string name="apply">Apply</string>
+    <string name="pattern">Pattern</string>
+    <string name="color">Color</string>
+    <string name="speed">Speed</string>
+
+    <!-- Patterns -->
+    <string-array name="patterns">
+        <item>Gradient</item>
+        <item>Color Shift</item>
+    </string-array>
+
+    <!-- Colors -->
+    <string-array name="colors">
+        <item>Red</item>
+        <item>Blue</item>
+        <item>Green</item>
+        <item>Yellow</item>
+        <item>Purple</item>
+        <item>Cyan</item>
+        <item>Random</item>
+    </string-array>
+</resources>
