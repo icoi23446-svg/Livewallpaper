@@ -18,18 +18,16 @@ class MainActivity : AppCompatActivity() {
 
         prefs = getSharedPreferences("WallpaperSettings", Context.MODE_PRIVATE)
 
+        // عناصر الواجهة
         val patternSpinner = findViewById<Spinner>(R.id.patternSpinner)
         val colorSpinner = findViewById<Spinner>(R.id.colorSpinner)
         val directionSpinner = findViewById<Spinner>(R.id.directionSpinner)
         val effectSpinner = findViewById<Spinner>(R.id.effectSpinner)
-
         val speedSeek = findViewById<SeekBar>(R.id.speedSeekBar)
-        val sizeSeek = findViewById<SeekBar>(R.id.sizeSeekBar)
-        val densitySeek = findViewById<SeekBar>(R.id.densitySeekBar)
 
         val applyButton = findViewById<Button>(R.id.applyButton)
 
-        // adapters
+        // إعداد الـ Spinners
         patternSpinner.adapter = ArrayAdapter.createFromResource(
             this, R.array.patterns, android.R.layout.simple_spinner_item
         ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
@@ -53,20 +51,16 @@ class MainActivity : AppCompatActivity() {
         setSpinnerSelection(effectSpinner, prefs.getString("effect", null))
 
         speedSeek.progress = prefs.getInt("speed", 5)
-        sizeSeek.progress = prefs.getInt("size", 50)
-        densitySeek.progress = prefs.getInt("density", 5)
 
-        // Listeners للحفظ
+        // حفظ التغييرات
         spinnerSave(patternSpinner, "pattern")
         spinnerSave(colorSpinner, "color")
         spinnerSave(directionSpinner, "direction")
         spinnerSave(effectSpinner, "effect")
 
         seekSave(speedSeek, "speed")
-        seekSave(sizeSeek, "size")
-        seekSave(densitySeek, "density")
 
-        // زر التعيين
+        // زر التطبيق
         applyButton.setOnClickListener {
             val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER).apply {
                 putExtra(
@@ -80,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setSpinnerSelection(spinner: Spinner, value: String?) {
         if (value == null) return
-        val adapter = spinner.adapter as ArrayAdapter<String>
+        val adapter = spinner.adapter as ArrayAdapter<*>
         val pos = adapter.getPosition(value)
         if (pos >= 0) spinner.setSelection(pos)
     }
@@ -88,7 +82,10 @@ class MainActivity : AppCompatActivity() {
     private fun spinnerSave(spinner: Spinner, key: String) {
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
-                parent: AdapterView<*>, view: android.view.View?, position: Int, id: Long
+                parent: AdapterView<*>,
+                view: android.view.View?,
+                position: Int,
+                id: Long
             ) {
                 val value = parent.getItemAtPosition(position).toString()
                 prefs.edit().putString(key, value).apply()
