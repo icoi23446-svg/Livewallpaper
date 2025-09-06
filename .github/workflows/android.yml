@@ -11,27 +11,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
+    - name: Checkout code
       uses: actions/checkout@v4
 
-    # نثبت Java 17 (مطلوب للـ Android Gradle Plugin)
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         distribution: temurin
         java-version: 17
 
-    # نثبت Gradle 8.6 مباشرة
-    - name: Setup Gradle 8.6
+    - name: Set up Gradle 8.6
       uses: gradle/actions/setup-gradle@v3
       with:
         gradle-version: 8.6
 
-    # نبني APK
     - name: Build Debug APK
-      run: gradle assembleDebug --no-daemon
+      run: |
+        gradle --version
+        gradle assembleDebug --no-daemon
 
-    # نرفع ملف APK كأرتيفاكت
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
