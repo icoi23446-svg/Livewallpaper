@@ -31,11 +31,8 @@ class MultiEngineService : WallpaperService() {
 
         override fun onVisibilityChanged(visible: Boolean) {
             running = visible
-            if (visible) {
-                handler.post(drawRunner)
-            } else {
-                handler.removeCallbacks(drawRunner)
-            }
+            if (visible) handler.post(drawRunner)
+            else handler.removeCallbacks(drawRunner)
         }
 
         override fun onSurfaceDestroyed(holder: SurfaceHolder) {
@@ -59,9 +56,8 @@ class MultiEngineService : WallpaperService() {
                     return
                 }
 
-                // ⚡ هنا بنقرأ الإعدادات من SharedPreferences (نفس الاسم اللي في MainActivity)
                 val prefs = getSharedPreferences("WallpaperSettings", Context.MODE_PRIVATE)
-                val pattern = prefs.getString("pattern", "تدرج لوني") ?: "تدرج لوني"
+                val pattern = prefs.getString("pattern", "Animated Gradient") ?: "Animated Gradient"
                 val colorName = prefs.getString("color", "أزرق") ?: "أزرق"
                 val effect = prefs.getString("effect", "بدون") ?: "بدون"
                 val direction = prefs.getString("direction", "يمين") ?: "يمين"
@@ -89,7 +85,7 @@ class MultiEngineService : WallpaperService() {
                     lastSize = sizeProgress
                 }
 
-                val doRotate = effect == "دوران"
+                val doRotate = effect == "دوران" || effect == "Rotate"
                 if (doRotate) {
                     canvas.save()
                     val rotateDeg = (angle * 10f) % 360f
@@ -97,20 +93,26 @@ class MultiEngineService : WallpaperService() {
                 }
 
                 when (pattern) {
-                    "تدرج لوني" -> drawAnimatedGradient(canvas, w, h, hueShift)
-                    "تغير لون" -> drawColorCycle(canvas, w, h, angle)
-                    "جسيمات" -> drawParticles(canvas, w, h, baseColor, sizeProgress, densityProgress, direction, effect, angle)
-                    "موجات" -> drawWaves(canvas, w, h, baseColor, sizeProgress, densityProgress, direction, effect, angle)
-                    else -> drawAnimatedGradient(canvas, w, h, hueShift)
+                    "Animated Gradient", "تدرج لوني", "Gradient" -> {
+                        drawAnimatedGradient(canvas, w, h, hueShift)
+                    }
+                    "Color Cycle", "تغير لون", "Color Cycle" -> {
+                        drawColorCycle(canvas, w, h, angle)
+                    }
+                    "Particles", "جسيمات", "Particles" -> {
+                        drawParticles(canvas, w, h, baseColor, sizeProgress, densityProgress, direction, effect, angle)
+                    }
+                    "Waves", "موجات", "Waves" -> {
+                        drawWaves(canvas, w, h, baseColor, sizeProgress, densityProgress, direction, effect, angle)
+                    }
+                    else -> {
+                        drawAnimatedGradient(canvas, w, h, hueShift)
+                    }
                 }
 
-                if (doRotate) {
-                    canvas.restore()
-                }
-
+                if (doRotate) canvas.restore()
                 paint.shader = null
                 scheduleNext(frameDelay)
-
             } finally {
                 if (canvas != null) {
                     try { holder.unlockCanvasAndPost(canvas) } catch (_: Exception) {}
@@ -125,6 +127,7 @@ class MultiEngineService : WallpaperService() {
             }
         }
 
+        // ---------- أنماط الرسم ----------
         private fun drawAnimatedGradient(canvas: Canvas, w: Int, h: Int, hueShift: Float) {
             val colors = IntArray(5) { i ->
                 val hue = (hueShift + i * 72f) % 360f
@@ -158,20 +161,19 @@ class MultiEngineService : WallpaperService() {
             val baseRadius = (4f + sizeProgress / 10f).coerceAtLeast(1f)
 
             val dxDir = when (direction) {
-                "يمين" -> 1f
-                "يسار" -> -1f
+                "يمين", "Right" -> 1f
+                "يسار", "Left" -> -1f
                 else -> 0f
             }
             val dyDir = when (direction) {
-                "أسفل" -> 1f
-                "أعلى" -> -1f
+                "أسفل", "Down" -> 1f
+                "أعلى", "Up" -> -1f
                 else -> 0f
             }
 
             for ((i, p) in particles.withIndex()) {
                 p.x += p.vx + dxDir * (0.2f * (densityProgress + 1))
                 p.y += p.vy + dyDir * (0.2f * (densityProgress + 1))
-
                 p.x += sin((angle + i) * 0.02f) * (1 + sizeProgress / 40f)
                 p.y += cos((angle + i) * 0.02f) * (1 + sizeProgress / 40f)
 
@@ -186,14 +188,13 @@ class MultiEngineService : WallpaperService() {
                 paint.color = particleColor
 
                 val alpha = when (effect) {
-                    "وميض" -> ((128 + 127 * sin(angle + i)).roundToInt()).coerceIn(30, 255)
-                    "شفافية" -> 90
+                    "وميض", "Pulse" -> ((128 + 127 * sin(angle + i)).roundToInt()).coerceIn(30, 255)
+                    "شفافية", "Transparency" -> 90
                     else -> 255
                 }
                 paint.alpha = alpha
 
-                val radius = baseRadius + (if (effect == "وميض") abs(sin(angle + i)) * baseRadius else 0f)
-
+                val radius = baseRadius + (if (effect == "وميض" || effect == "Pulse") abs(sin(angle + i)) * baseRadius else 0f)
                 canvas.drawCircle(p.x, p.y, radius, paint)
             }
         }
@@ -213,7 +214,7 @@ class MultiEngineService : WallpaperService() {
             paint.style = Paint.Style.STROKE
             paint.strokeWidth = max(1f, sizeProgress / 8f)
             paint.color = baseColor
-            paint.alpha = if (effect == "شفافية") 130 else 255
+            paint.alpha = if (effect == "شفافية" || effect == "Transparency") 130 else 255
 
             val waves = (1 + densityProgress).coerceAtMost(8)
             val amplitude = 30f + sizeProgress.toFloat()
@@ -238,29 +239,30 @@ class MultiEngineService : WallpaperService() {
         }
 
         private fun initParticlesIfNeeded(pattern: String, density: Int, size: Int, w: Int, h: Int) {
-            if (pattern == "جسيمات") {
+            if (pattern.startsWith("Particles", true) || pattern == "Particles" || pattern == "جسيمات") {
                 val count = (10 + density * 30).coerceAtMost(800)
                 if (particles.size != count || lastSize != size) {
                     particles = MutableList(count) { Particle.random(w, h, size) }
                 }
             } else {
-                if (particles.isNotEmpty()) particles.clear()
+                if (particles.size > 0) particles.clear()
             }
         }
 
         private fun colorFromName(name: String): Int {
             return when (name.lowercase()) {
-                "أحمر" -> Color.RED
-                "أخضر" -> Color.GREEN
-                "أصفر" -> Color.YELLOW
-                "بنفسجي" -> Color.MAGENTA
-                "سماوي" -> Color.CYAN
-                "أزرق" -> Color.BLUE
-                "عشوائي" -> Color.TRANSPARENT
+                "أحمر", "red" -> Color.RED
+                "أخضر", "green" -> Color.GREEN
+                "أصفر", "yellow" -> Color.YELLOW
+                "بنفسجي", "purple" -> Color.MAGENTA
+                "سماوي", "cyan" -> Color.CYAN
+                "أزرق", "blue" -> Color.BLUE
+                "عشوائي", "random" -> Color.TRANSPARENT
                 else -> Color.BLUE
             }
         }
 
+        // -------- كلاس Particle (برا أي دالة) --------
         private data class Particle(var x: Float, var y: Float, var vx: Float, var vy: Float) {
             companion object {
                 fun random(w: Int, h: Int, sizeProgress: Int): Particle {
