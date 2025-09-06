@@ -1,30 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@color/background">
-
-    <!-- عنوان -->
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="إعدادات الخلفية المتحركة"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/textColor"
-        android:layout_gravity="center_horizontal"
-        android:paddingBottom="24dp"/>
+    android:gravity="center"
+    android:background="?android:attr/windowBackground">
 
     <!-- اختيار النمط -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="النمط:"
-        android:textColor="@color/textColor"/>
-
+        android:text="النمط"
+        android:textSize="18sp"
+        android:paddingTop="8dp"/>
     <Spinner
         android:id="@+id/patternSpinner"
         android:layout_width="match_parent"
@@ -34,23 +24,45 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="اللون:"
-        android:textColor="@color/textColor"
-        android:layout_marginTop="12dp"/>
-
+        android:text="اللون"
+        android:textSize="18sp"
+        android:paddingTop="8dp"/>
     <Spinner
         android:id="@+id/colorSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <!-- سرعة -->
+    <!-- اختيار الاتجاه -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="السرعة:"
-        android:textColor="@color/textColor"
-        android:layout_marginTop="12dp"/>
+        android:text="الاتجاه"
+        android:textSize="18sp"
+        android:paddingTop="8dp"/>
+    <Spinner
+        android:id="@+id/directionSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
+    <!-- اختيار التأثير -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="التأثير"
+        android:textSize="18sp"
+        android:paddingTop="8dp"/>
+    <Spinner
+        android:id="@+id/effectSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!-- التحكم في السرعة -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="السرعة"
+        android:textSize="18sp"
+        android:paddingTop="8dp"/>
     <SeekBar
         android:id="@+id/speedSeekBar"
         android:layout_width="match_parent"
@@ -63,7 +75,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/apply"
-        android:backgroundTint="@color/buttonColor"
-        android:textColor="@color/textColor"
-        android:layout_marginTop="24dp"/>
+        android:layout_marginTop="16dp"/>
 </LinearLayout>
