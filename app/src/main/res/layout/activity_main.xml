@@ -5,32 +5,32 @@
     android:padding="16dp">
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:gravity="center_horizontal"
         android:spacing="12dp">
 
-        <!-- اختيار النمط -->
+        <!-- النمط -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/pattern_label"
-            android:textSize="16sp"
-            android:paddingTop="8dp"/>
+            android:textStyle="bold"/>
+
         <Spinner
             android:id="@+id/patternSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:entries="@array/patterns_array"/>
 
-        <!-- اختيار اللون -->
+        <!-- اللون -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/color_label"
-            android:textSize="16sp"
-            android:paddingTop="8dp"/>
+            android:textStyle="bold"/>
+
         <Spinner
             android:id="@+id/colorSpinner"
             android:layout_width="match_parent"
@@ -42,50 +42,47 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/speed_label"
-            android:textSize="16sp"
-            android:paddingTop="8dp"/>
+            android:textStyle="bold"/>
+
         <SeekBar
             android:id="@+id/speedSeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="10"
-            android:progress="5"/>
+            android:max="10"/>
 
         <!-- الحجم -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/size_label"
-            android:textSize="16sp"
-            android:paddingTop="8dp"/>
+            android:textStyle="bold"/>
+
         <SeekBar
             android:id="@+id/sizeSeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="100"
-            android:progress="50"/>
+            android:max="100"/>
 
         <!-- الكثافة -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/density_label"
-            android:textSize="16sp"
-            android:paddingTop="8dp"/>
+            android:textStyle="bold"/>
+
         <SeekBar
             android:id="@+id/densitySeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="10"
-            android:progress="5"/>
+            android:max="10"/>
 
         <!-- الاتجاه -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/direction_label"
-            android:textSize="16sp"
-            android:paddingTop="8dp"/>
+            android:textStyle="bold"/>
+
         <Spinner
             android:id="@+id/directionSpinner"
             android:layout_width="match_parent"
@@ -97,8 +94,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/effect_label"
-            android:textSize="16sp"
-            android:paddingTop="8dp"/>
+            android:textStyle="bold"/>
+
         <Spinner
             android:id="@+id/effectSpinner"
             android:layout_width="match_parent"
@@ -111,6 +108,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/apply"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="20dp"
+            android:padding="12dp"/>
+
     </LinearLayout>
 </ScrollView>
