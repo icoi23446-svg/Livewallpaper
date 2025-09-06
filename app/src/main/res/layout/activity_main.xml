@@ -8,99 +8,84 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:spacing="12dp">
+        android:gravity="center_horizontal">
 
         <!-- النمط -->
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/pattern_label"
-            android:textStyle="bold"/>
+            style="@style/Widget.CustomLabel"
+            android:text="@string/pattern_label" />
 
         <Spinner
             android:id="@+id/patternSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/patterns_array"/>
+            android:entries="@array/patterns_array" />
 
         <!-- اللون -->
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/color_label"
-            android:textStyle="bold"/>
+            style="@style/Widget.CustomLabel"
+            android:text="@string/color_label" />
 
         <Spinner
             android:id="@+id/colorSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/colors_array"/>
+            android:entries="@array/colors_array" />
 
         <!-- السرعة -->
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/speed_label"
-            android:textStyle="bold"/>
+            style="@style/Widget.CustomLabel"
+            android:text="@string/speed_label" />
 
         <SeekBar
             android:id="@+id/speedSeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="10"/>
+            android:max="10" />
 
         <!-- الحجم -->
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/size_label"
-            android:textStyle="bold"/>
+            style="@style/Widget.CustomLabel"
+            android:text="@string/size_label" />
 
         <SeekBar
             android:id="@+id/sizeSeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="100"/>
+            android:max="100" />
 
         <!-- الكثافة -->
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/density_label"
-            android:textStyle="bold"/>
+            style="@style/Widget.CustomLabel"
+            android:text="@string/density_label" />
 
         <SeekBar
             android:id="@+id/densitySeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="10"/>
+            android:max="10" />
 
         <!-- الاتجاه -->
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/direction_label"
-            android:textStyle="bold"/>
+            style="@style/Widget.CustomLabel"
+            android:text="@string/direction_label" />
 
         <Spinner
             android:id="@+id/directionSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/direction_array"/>
+            android:entries="@array/direction_array" />
 
         <!-- التأثير -->
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/effect_label"
-            android:textStyle="bold"/>
+            style="@style/Widget.CustomLabel"
+            android:text="@string/effect_label" />
 
         <Spinner
             android:id="@+id/effectSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/effects_array"/>
+            android:entries="@array/effects_array" />
 
         <!-- زر التطبيق -->
         <Button
@@ -108,8 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/apply"
-            android:layout_marginTop="20dp"
-            android:padding="12dp"/>
+            android:layout_marginTop="24dp" />
 
     </LinearLayout>
 </ScrollView>
