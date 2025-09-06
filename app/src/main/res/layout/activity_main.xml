@@ -2,126 +2,35 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="@android:color/black">
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="8dp">
 
-        <!-- اختيار النمط -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="النمط"
-            android:textColor="@android:color/white"
-            android:textSize="18sp" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="النمط"/>
+        <Spinner android:id="@+id/patternSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" android:entries="@array/patterns"/>
 
-        <Spinner
-            android:id="@+id/patternSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:spinnerMode="dropdown"
-            android:background="@android:drawable/btn_dropdown"
-            android:entries="@array/patterns" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="اللون" android:layout_marginTop="8dp"/>
+        <Spinner android:id="@+id/colorSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" android:entries="@array/colors"/>
 
-        <!-- اختيار اللون -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="اللون"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:layout_marginTop="12dp" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="الاتجاه" android:layout_marginTop="8dp"/>
+        <Spinner android:id="@+id/directionSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" android:entries="@array/directions"/>
 
-        <Spinner
-            android:id="@+id/colorSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:spinnerMode="dropdown"
-            android:background="@android:drawable/btn_dropdown"
-            android:entries="@array/colors" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="التأثير" android:layout_marginTop="8dp"/>
+        <Spinner android:id="@+id/effectSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" android:entries="@array/effects"/>
 
-        <!-- السرعة -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="السرعة"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:layout_marginTop="12dp" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="السرعة" android:layout_marginTop="12dp"/>
+        <SeekBar android:id="@+id/speedSeekBar" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="10"/>
 
-        <SeekBar
-            android:id="@+id/speedSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="10" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="الحجم" android:layout_marginTop="12dp"/>
+        <SeekBar android:id="@+id/sizeSeekBar" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="100"/>
 
-        <!-- الحجم -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="الحجم"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:layout_marginTop="12dp" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="الكثافة" android:layout_marginTop="12dp"/>
+        <SeekBar android:id="@+id/densitySeekBar" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="10"/>
 
-        <SeekBar
-            android:id="@+id/sizeSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="100" />
-
-        <!-- الكثافة -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="الكثافة"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:layout_marginTop="12dp" />
-
-        <SeekBar
-            android:id="@+id/densitySeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="10" />
-
-        <!-- الاتجاه -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="الاتجاه"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:layout_marginTop="12dp" />
-
-        <Spinner
-            android:id="@+id/directionSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:spinnerMode="dropdown"
-            android:background="@android:drawable/btn_dropdown"
-            android:entries="@array/directions" />
-
-        <!-- التأثير -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="التأثير"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:layout_marginTop="12dp" />
-
-        <Spinner
-            android:id="@+id/effectSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:spinnerMode="dropdown"
-            android:background="@android:drawable/btn_dropdown"
-            android:entries="@array/effects" />
-
+        <Button android:id="@+id/applyButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/apply" android:layout_marginTop="16dp"/>
     </LinearLayout>
 </ScrollView>
