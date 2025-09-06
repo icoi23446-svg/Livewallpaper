@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.*
 import android.service.wallpaper.WallpaperService
-import android.service.wallpaper.WallpaperService.Engine
 import android.view.SurfaceHolder
 import kotlin.random.Random
 
@@ -22,7 +21,6 @@ class MultiEngineService : WallpaperService() {
         private var visible = true
         private var thread: Thread? = null
 
-        // إعدادات من SharedPreferences
         private var pattern = prefs.getString("pattern", "تدرج لوني") ?: "تدرج لوني"
         private var color = prefs.getString("color", "عشوائي") ?: "عشوائي"
         private var speed = prefs.getInt("speed", 5)
@@ -44,15 +42,12 @@ class MultiEngineService : WallpaperService() {
                     var canvas: Canvas? = null
                     try {
                         canvas = holder.lockCanvas()
-                        if (canvas != null) {
-                            drawFrame(canvas)
-                        }
+                        if (canvas != null) drawFrame(canvas)
                     } finally {
                         if (canvas != null) holder.unlockCanvasAndPost(canvas)
                     }
                     try {
-                        // التحكم في سرعة التحديث
-                        Thread.sleep((100 - speed * 9).toLong().coerceAtLeast(10))
+                        Thread.sleep((100 - speed * 9).toLong().coerceAtLeast(20))
                     } catch (_: InterruptedException) { }
                 }
             }
@@ -68,22 +63,24 @@ class MultiEngineService : WallpaperService() {
         private fun drawFrame(canvas: Canvas) {
             canvas.drawColor(Color.BLACK)
 
+            pattern = prefs.getString("pattern", "تدرج لوني") ?: "تدرج لوني"
+            color = prefs.getString("color", "عشوائي") ?: "عشوائي"
+            speed = prefs.getInt("speed", 5)
+
             when (pattern) {
-                "تدرج لوني" -> drawGradient(canvas)
-                "تغير لون" -> drawColorShift(canvas)
+                "تدرج لوني", "Gradient" -> drawGradient(canvas)
+                "تغير لون", "Color Shift" -> drawColorShift(canvas)
             }
         }
 
         private fun drawGradient(canvas: Canvas) {
-            val width = canvas.width.toFloat()
-            val height = canvas.height.toFloat()
             val shader = LinearGradient(
-                0f, 0f, width, height,
+                0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(),
                 getColorFromName(color), getRandomColor(),
                 Shader.TileMode.MIRROR
             )
             paint.shader = shader
-            canvas.drawRect(0f, 0f, width, height, paint)
+            canvas.drawRect(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(), paint)
         }
 
         private fun drawColorShift(canvas: Canvas) {
@@ -94,12 +91,12 @@ class MultiEngineService : WallpaperService() {
 
         private fun getColorFromName(name: String): Int {
             return when (name) {
-                "أحمر" -> Color.RED
-                "أزرق" -> Color.BLUE
-                "أخضر" -> Color.GREEN
-                "أصفر" -> Color.YELLOW
-                "بنفسجي" -> Color.MAGENTA
-                "سماوي" -> Color.CYAN
+                "أحمر", "Red" -> Color.RED
+                "أزرق", "Blue" -> Color.BLUE
+                "أخضر", "Green" -> Color.GREEN
+                "أصفر", "Yellow" -> Color.YELLOW
+                "بنفسجي", "Purple" -> Color.MAGENTA
+                "سماوي", "Cyan" -> Color.CYAN
                 else -> getRandomColor()
             }
         }
