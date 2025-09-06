@@ -4,9 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.*
 import android.service.wallpaper.WallpaperService
+import android.service.wallpaper.WallpaperService.Engine
 import android.view.SurfaceHolder
-import kotlin.math.PI
-import kotlin.math.sin
 import kotlin.random.Random
 
 class MultiEngineService : WallpaperService() {
@@ -23,14 +22,10 @@ class MultiEngineService : WallpaperService() {
         private var visible = true
         private var thread: Thread? = null
 
-        // الإعدادات من SharedPreferences
-        private var pattern: String = prefs.getString("pattern", "تدرج لوني") ?: "تدرج لوني"
-        private var color: String = prefs.getString("color", "عشوائي") ?: "عشوائي"
-        private var direction: String = prefs.getString("direction", "يمين") ?: "يمين"
-        private var effect: String = prefs.getString("effect", "بدون") ?: "بدون"
-        private var speed: Int = prefs.getInt("speed", 5)
-        private var size: Int = prefs.getInt("size", 50)
-        private var density: Int = prefs.getInt("density", 5)
+        // إعدادات من SharedPreferences
+        private var pattern = prefs.getString("pattern", "تدرج لوني") ?: "تدرج لوني"
+        private var color = prefs.getString("color", "عشوائي") ?: "عشوائي"
+        private var speed = prefs.getInt("speed", 5)
 
         override fun onVisibilityChanged(visible: Boolean) {
             this.visible = visible
@@ -56,9 +51,9 @@ class MultiEngineService : WallpaperService() {
                         if (canvas != null) holder.unlockCanvasAndPost(canvas)
                     }
                     try {
-                        Thread.sleep(40L * (11 - speed)) // التحكم في السرعة (1 بطيء – 10 سريع)
-                    } catch (_: InterruptedException) {
-                    }
+                        // التحكم في سرعة التحديث
+                        Thread.sleep((100 - speed * 9).toLong().coerceAtLeast(10))
+                    } catch (_: InterruptedException) { }
                 }
             }
             thread?.start()
@@ -76,8 +71,6 @@ class MultiEngineService : WallpaperService() {
             when (pattern) {
                 "تدرج لوني" -> drawGradient(canvas)
                 "تغير لون" -> drawColorShift(canvas)
-                "جسيمات" -> drawParticles(canvas)
-                "موجات" -> drawWaves(canvas)
             }
         }
 
@@ -97,36 +90,6 @@ class MultiEngineService : WallpaperService() {
             paint.shader = null
             paint.color = getRandomColor()
             canvas.drawRect(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(), paint)
-        }
-
-        private fun drawParticles(canvas: Canvas) {
-            paint.shader = null
-            for (i in 0 until density * 10) {
-                paint.color = getColorFromName(color)
-                val x = Random.nextInt(canvas.width).toFloat()
-                val y = Random.nextInt(canvas.height).toFloat()
-                canvas.drawCircle(x, y, size.toFloat(), paint)
-            }
-        }
-
-        private fun drawWaves(canvas: Canvas) {
-            paint.shader = null
-            paint.style = Paint.Style.STROKE
-            paint.strokeWidth = 3f
-            paint.color = getColorFromName(color)
-
-            val amplitude = size.toFloat()
-            val frequency = 2 * PI / 200
-            val centerY = canvas.height / 2f
-
-            val path = Path()
-            path.moveTo(0f, centerY)
-            for (x in 0..canvas.width step 10) {
-                val y = (centerY + amplitude * sin(frequency * x + System.currentTimeMillis() / 500.0)).toFloat()
-                path.lineTo(x.toFloat(), y)
-            }
-            canvas.drawPath(path, paint)
-            paint.style = Paint.Style.FILL
         }
 
         private fun getColorFromName(name: String): Int {
