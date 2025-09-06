@@ -1,90 +1,278 @@
 package com.example.livewallpaper
 
-import android.content.SharedPreferences
-import android.os.Bundle
-import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
+import android.graphics.*
+import android.os.Handler
+import android.os.Looper
+import android.service.wallpaper.WallpaperService
+import android.view.SurfaceHolder
+import kotlin.math.*
+import kotlin.random.Random
 
-class MainActivity : AppCompatActivity() {
+class MultiEngineService : WallpaperService() {
+    override fun onCreateEngine(): Engine = FancyEngine()
 
-    private lateinit var prefs: SharedPreferences
+    inner class FancyEngine : Engine() {
+        private val handler = Handler(Looper.getMainLooper())
+        private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        private var running = false
+        private var angle = 0f
+        private var hueShift = 0f
+        private var lastPattern = ""
+        private var particles: MutableList<Particle> = mutableListOf()
+        private var lastDensity = -1
+        private var lastSize = -1
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        prefs = getSharedPreferences("LiveWallpaperPrefs", MODE_PRIVATE)
-
-        // عناصر الواجهة
-        val patternSpinner: Spinner = findViewById(R.id.patternSpinner)
-        val colorSpinner: Spinner = findViewById(R.id.colorSpinner)
-        val speedSeek: SeekBar = findViewById(R.id.speedSeekBar)
-        val sizeSeek: SeekBar = findViewById(R.id.sizeSeekBar)
-        val densitySeek: SeekBar = findViewById(R.id.densitySeekBar)
-        val directionSpinner: Spinner = findViewById(R.id.directionSpinner)
-        val effectSpinner: Spinner = findViewById(R.id.effectSpinner)
-
-        // تحميل القيم المحفوظة سابقاً
-        speedSeek.progress = prefs.getInt("speed", 5)
-        sizeSeek.progress = prefs.getInt("size", 50)
-        densitySeek.progress = prefs.getInt("density", 5)
-
-        // عند تغيير القيمة يتم حفظها
-        speedSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, value: Int, fromUser: Boolean) {
-                prefs.edit().putInt("speed", value).apply()
+        private val drawRunner = object : Runnable {
+            override fun run() {
+                drawFrame()
             }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-
-        sizeSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, value: Int, fromUser: Boolean) {
-                prefs.edit().putInt("size", value).apply()
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-
-        densitySeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, value: Int, fromUser: Boolean) {
-                prefs.edit().putInt("density", value).apply()
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-
-        // سبينرات (نمط – لون – اتجاه – تأثير)
-        patternSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: android.view.View?, position: Int, id: Long) {
-                val value = parent.getItemAtPosition(position).toString()
-                prefs.edit().putString("pattern", value).apply()
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
-        colorSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: android.view.View?, position: Int, id: Long) {
-                val value = parent.getItemAtPosition(position).toString()
-                prefs.edit().putString("color", value).apply()
+        override fun onVisibilityChanged(visible: Boolean) {
+            running = visible
+            if (visible) {
+                handler.post(drawRunner)
+            } else {
+                handler.removeCallbacks(drawRunner)
             }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
-        directionSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: android.view.View?, position: Int, id: Long) {
-                val value = parent.getItemAtPosition(position).toString()
-                prefs.edit().putString("direction", value).apply()
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
+        override fun onSurfaceDestroyed(holder: SurfaceHolder) {
+            super.onSurfaceDestroyed(holder)
+            running = false
+            handler.removeCallbacks(drawRunner)
         }
 
-        effectSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: android.view.View?, position: Int, id: Long) {
-                val value = parent.getItemAtPosition(position).toString()
-                prefs.edit().putString("effect", value).apply()
+        override fun onDestroy() {
+            super.onDestroy()
+            handler.removeCallbacks(drawRunner)
+        }
+
+        private fun drawFrame() {
+            val holder: SurfaceHolder = surfaceHolder
+            var canvas: Canvas? = null
+            try {
+                canvas = holder.lockCanvas()
+                if (canvas == null) {
+                    scheduleNext(50)
+                    return
+                }
+
+                // ⚡ هنا بنقرأ الإعدادات من SharedPreferences (نفس الاسم اللي في MainActivity)
+                val prefs = getSharedPreferences("WallpaperSettings", Context.MODE_PRIVATE)
+                val pattern = prefs.getString("pattern", "تدرج لوني") ?: "تدرج لوني"
+                val colorName = prefs.getString("color", "أزرق") ?: "أزرق"
+                val effect = prefs.getString("effect", "بدون") ?: "بدون"
+                val direction = prefs.getString("direction", "يمين") ?: "يمين"
+                val speedProgress = prefs.getInt("speed", 5)
+                val sizeProgress = prefs.getInt("size", 50)
+                val densityProgress = prefs.getInt("density", 5)
+
+                val w = canvas.width
+                val h = canvas.height
+                val cx = w / 2f
+                val cy = h / 2f
+
+                val fps = (8 + (speedProgress.coerceIn(0, 10) * 5))
+                val frameDelay = max(16L, (1000L / fps))
+
+                val baseColor = colorFromName(colorName)
+
+                angle += 0.02f * (speedProgress.coerceIn(0, 10) + 1)
+                hueShift = (hueShift + 0.3f * (speedProgress.coerceIn(0, 10) + 1)) % 360f
+
+                if (pattern != lastPattern || densityProgress != lastDensity || sizeProgress != lastSize) {
+                    initParticlesIfNeeded(pattern, densityProgress, sizeProgress, w, h)
+                    lastPattern = pattern
+                    lastDensity = densityProgress
+                    lastSize = sizeProgress
+                }
+
+                val doRotate = effect == "دوران"
+                if (doRotate) {
+                    canvas.save()
+                    val rotateDeg = (angle * 10f) % 360f
+                    canvas.rotate(rotateDeg, cx, cy)
+                }
+
+                when (pattern) {
+                    "تدرج لوني" -> drawAnimatedGradient(canvas, w, h, hueShift)
+                    "تغير لون" -> drawColorCycle(canvas, w, h, angle)
+                    "جسيمات" -> drawParticles(canvas, w, h, baseColor, sizeProgress, densityProgress, direction, effect, angle)
+                    "موجات" -> drawWaves(canvas, w, h, baseColor, sizeProgress, densityProgress, direction, effect, angle)
+                    else -> drawAnimatedGradient(canvas, w, h, hueShift)
+                }
+
+                if (doRotate) {
+                    canvas.restore()
+                }
+
+                paint.shader = null
+                scheduleNext(frameDelay)
+
+            } finally {
+                if (canvas != null) {
+                    try { holder.unlockCanvasAndPost(canvas) } catch (_: Exception) {}
+                }
             }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+
+        private fun scheduleNext(delayMs: Long) {
+            if (running) {
+                handler.removeCallbacks(drawRunner)
+                handler.postDelayed(drawRunner, delayMs)
+            }
+        }
+
+        private fun drawAnimatedGradient(canvas: Canvas, w: Int, h: Int, hueShift: Float) {
+            val colors = IntArray(5) { i ->
+                val hue = (hueShift + i * 72f) % 360f
+                Color.HSVToColor(floatArrayOf(hue, 0.9f, 1f))
+            }
+            val shader = LinearGradient(0f, 0f, w.toFloat(), h.toFloat(), colors, null, Shader.TileMode.MIRROR)
+            paint.shader = shader
+            canvas.drawRect(0f, 0f, w.toFloat(), h.toFloat(), paint)
+            paint.shader = null
+        }
+
+        private fun drawColorCycle(canvas: Canvas, w: Int, h: Int, angle: Float) {
+            val hue = (angle * 20f) % 360f
+            val color = Color.HSVToColor(floatArrayOf(hue, 0.85f, 1f))
+            canvas.drawColor(color)
+        }
+
+        private fun drawParticles(
+            canvas: Canvas,
+            w: Int,
+            h: Int,
+            baseColor: Int,
+            sizeProgress: Int,
+            densityProgress: Int,
+            direction: String,
+            effect: String,
+            angle: Float
+        ) {
+            canvas.drawColor(Color.BLACK)
+            paint.style = Paint.Style.FILL
+            val baseRadius = (4f + sizeProgress / 10f).coerceAtLeast(1f)
+
+            val dxDir = when (direction) {
+                "يمين" -> 1f
+                "يسار" -> -1f
+                else -> 0f
+            }
+            val dyDir = when (direction) {
+                "أسفل" -> 1f
+                "أعلى" -> -1f
+                else -> 0f
+            }
+
+            for ((i, p) in particles.withIndex()) {
+                p.x += p.vx + dxDir * (0.2f * (densityProgress + 1))
+                p.y += p.vy + dyDir * (0.2f * (densityProgress + 1))
+
+                p.x += sin((angle + i) * 0.02f) * (1 + sizeProgress / 40f)
+                p.y += cos((angle + i) * 0.02f) * (1 + sizeProgress / 40f)
+
+                if (p.x < -50) p.x = w + 50f
+                if (p.x > w + 50) p.x = -50f
+                if (p.y < -50) p.y = h + 50f
+                if (p.y > h + 50) p.y = -50f
+
+                val hue = (hueShift + i * 3) % 360
+                val particleColor = if (baseColor != Color.TRANSPARENT) baseColor
+                                    else Color.HSVToColor(floatArrayOf(hue, 0.8f, 1f))
+                paint.color = particleColor
+
+                val alpha = when (effect) {
+                    "وميض" -> ((128 + 127 * sin(angle + i)).roundToInt()).coerceIn(30, 255)
+                    "شفافية" -> 90
+                    else -> 255
+                }
+                paint.alpha = alpha
+
+                val radius = baseRadius + (if (effect == "وميض") abs(sin(angle + i)) * baseRadius else 0f)
+
+                canvas.drawCircle(p.x, p.y, radius, paint)
+            }
+        }
+
+        private fun drawWaves(
+            canvas: Canvas,
+            w: Int,
+            h: Int,
+            baseColor: Int,
+            sizeProgress: Int,
+            densityProgress: Int,
+            direction: String,
+            effect: String,
+            angle: Float
+        ) {
+            canvas.drawColor(Color.BLACK)
+            paint.style = Paint.Style.STROKE
+            paint.strokeWidth = max(1f, sizeProgress / 8f)
+            paint.color = baseColor
+            paint.alpha = if (effect == "شفافية") 130 else 255
+
+            val waves = (1 + densityProgress).coerceAtMost(8)
+            val amplitude = 30f + sizeProgress.toFloat()
+            val step = 10
+
+            for (wIndex in 0 until waves) {
+                val phase = angle + wIndex * 0.6f
+                val path = Path()
+                var first = true
+                for (x in 0 until w step step) {
+                    val fx = x.toFloat()
+                    val y = (h / 2f + sin((x * 0.02f) + phase) * (amplitude + wIndex * 8)).toFloat()
+                    if (first) {
+                        path.moveTo(fx, y)
+                        first = false
+                    } else {
+                        path.lineTo(fx, y)
+                    }
+                }
+                canvas.drawPath(path, paint)
+            }
+        }
+
+        private fun initParticlesIfNeeded(pattern: String, density: Int, size: Int, w: Int, h: Int) {
+            if (pattern == "جسيمات") {
+                val count = (10 + density * 30).coerceAtMost(800)
+                if (particles.size != count || lastSize != size) {
+                    particles = MutableList(count) { Particle.random(w, h, size) }
+                }
+            } else {
+                if (particles.isNotEmpty()) particles.clear()
+            }
+        }
+
+        private fun colorFromName(name: String): Int {
+            return when (name.lowercase()) {
+                "أحمر" -> Color.RED
+                "أخضر" -> Color.GREEN
+                "أصفر" -> Color.YELLOW
+                "بنفسجي" -> Color.MAGENTA
+                "سماوي" -> Color.CYAN
+                "أزرق" -> Color.BLUE
+                "عشوائي" -> Color.TRANSPARENT
+                else -> Color.BLUE
+            }
+        }
+
+        private data class Particle(var x: Float, var y: Float, var vx: Float, var vy: Float) {
+            companion object {
+                fun random(w: Int, h: Int, sizeProgress: Int): Particle {
+                    val rnd = Random
+                    val x = rnd.nextInt(max(1, w)).toFloat()
+                    val y = rnd.nextInt(max(1, h)).toFloat()
+                    val speedFactor = 0.3f + sizeProgress / 80f
+                    val vx = (rnd.nextFloat() - 0.5f) * 2f * speedFactor
+                    val vy = (rnd.nextFloat() - 0.5f) * 2f * speedFactor
+                    return Particle(x, y, vx, vy)
+                }
+            }
         }
     }
 }
