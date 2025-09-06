@@ -2,22 +2,24 @@
     <!-- اسم التطبيق -->
     <string name="app_name">Ultimate Live Wallpaper</string>
 
-    <!-- أزرار -->
+    <!-- الأزرار -->
     <string name="apply">تطبيق الخلفية</string>
-    <string name="choose_pattern">اختر النمط</string>
-    <string name="choose_color">اختر اللون</string>
-    <string name="choose_speed">اختر السرعة</string>
-    <string name="choose_size">اختر الحجم</string>
-    <string name="choose_density">اختر الكثافة</string>
-    <string name="choose_direction">اختر الاتجاه</string>
-    <string name="choose_effect">اختر التأثير</string>
+
+    <!-- التسميات -->
+    <string name="pattern_label">النمط</string>
+    <string name="color_label">اللون</string>
+    <string name="speed_label">السرعة</string>
+    <string name="size_label">الحجم</string>
+    <string name="density_label">الكثافة</string>
+    <string name="direction_label">الاتجاه</string>
+    <string name="effect_label">التأثير</string>
 
     <!-- الأنماط -->
     <string-array name="patterns_array">
-        <item>Animated Gradient</item>
-        <item>Color Cycle</item>
-        <item>Particles</item>
-        <item>Waves</item>
+        <item>تدرج لوني</item>
+        <item>تغير لون</item>
+        <item>جسيمات</item>
+        <item>موجات</item>
     </string-array>
 
     <!-- الألوان -->
@@ -33,10 +35,10 @@
 
     <!-- الاتجاهات -->
     <string-array name="direction_array">
-        <item>أعلى</item>
-        <item>أسفل</item>
         <item>يمين</item>
         <item>يسار</item>
+        <item>أعلى</item>
+        <item>أسفل</item>
     </string-array>
 
     <!-- التأثيرات -->
