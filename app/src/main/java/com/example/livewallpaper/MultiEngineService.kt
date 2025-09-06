@@ -5,46 +5,43 @@ import android.content.SharedPreferences
 import android.graphics.*
 import android.service.wallpaper.WallpaperService
 import android.view.SurfaceHolder
+import kotlin.math.PI
 import kotlin.math.sin
 import kotlin.random.Random
 
 class MultiEngineService : WallpaperService() {
-    override fun onCreateEngine(): Engine = MultiEngine(this)
+    override fun onCreateEngine(): Engine {
+        return MultiEngine(this)
+    }
 
-    inner class MultiEngine(private val ctx: Context) :
-        Engine(), SharedPreferences.OnSharedPreferenceChangeListener {
+    inner class MultiEngine(private val context: Context) : Engine(),
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
         private val prefs: SharedPreferences =
-            ctx.getSharedPreferences("WallpaperSettings", Context.MODE_PRIVATE)
+            context.getSharedPreferences("WallpaperSettings", Context.MODE_PRIVATE)
 
         private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        private var running = false
-        private var drawThread: Thread? = null
+        private var visible = true
+        private var thread: Thread? = null
 
-        @Volatile private var pattern = prefs.getString("pattern", "تدرج لوني") ?: "تدرج لوني"
-        @Volatile private var colorName = prefs.getString("color", "عشوائي") ?: "عشوائي"
-        @Volatile private var direction = prefs.getString("direction", "يمين") ?: "يمين"
-        @Volatile private var effect = prefs.getString("effect", "بدون") ?: "بدون"
-        @Volatile private var speed = prefs.getInt("speed", 5)
-        @Volatile private var size = prefs.getInt("size", 50)
-        @Volatile private var density = prefs.getInt("density", 5)
+        // الإعدادات
+        private var pattern = prefs.getString("pattern", "تدرج لوني") ?: "تدرج لوني"
+        private var colorName = prefs.getString("color", "عشوائي") ?: "عشوائي"
+        private var direction = prefs.getString("direction", "يمين") ?: "يمين"
+        private var effect = prefs.getString("effect", "بدون") ?: "بدون"
+        private var speed = prefs.getInt("speed", 5)
+        private var size = prefs.getInt("size", 50)
+        private var density = prefs.getInt("density", 5)
 
-        // زمن/سرعة
-        private var t = 0.0
-        private val baseStep get() = (speed.coerceIn(1, 10) / 10.0)         // 0.1..1.0
-        private val frameDelayMs get() = (120 - speed.coerceIn(1,10)*10).coerceIn(16, 120)
-
-        // جسيمات
-        private data class Particle(var x: Float, var y: Float, var vx: Float, var vy: Float, var r: Float, var color: Int)
-        private var particles = mutableListOf<Particle>()
-
-        // انتقال لوني سلس
-        private var currentColor = randColor()
-        private var targetColor = pickTargetColor()
+        // ألوان للتدرج
+        private var currentColor = getColorFromName(colorName)
+        private var targetColor = getRandomColor()
         private var colorLerp = 0f
 
-        override fun onCreate(surfaceHolder: SurfaceHolder?) {
-            super.onCreate(surfaceHolder)
+        // جسيمات
+        private var particles = mutableListOf<Particle>()
+
+        init {
             prefs.registerOnSharedPreferenceChangeListener(this)
             initParticles()
         }
@@ -52,260 +49,190 @@ class MultiEngineService : WallpaperService() {
         override fun onDestroy() {
             super.onDestroy()
             prefs.unregisterOnSharedPreferenceChangeListener(this)
-            stop()
+            stopDrawing()
         }
 
         override fun onVisibilityChanged(visible: Boolean) {
-            if (visible) start() else stop()
+            this.visible = visible
+            if (visible) startDrawing() else stopDrawing()
         }
 
-        override fun onSurfaceDestroyed(holder: SurfaceHolder) {
-            super.onSurfaceDestroyed(holder)
-            stop()
-        }
-
-        private fun start() {
-            if (running) return
-            running = true
-            drawThread = Thread {
-                while (running) {
-                    var c: Canvas? = null
+        private fun startDrawing() {
+            thread = Thread {
+                while (visible) {
+                    val holder: SurfaceHolder = surfaceHolder
+                    var canvas: Canvas? = null
                     try {
-                        c = surfaceHolder.lockCanvas()
-                        if (c != null) drawFrame(c)
-                    } catch (_: Throwable) {
+                        canvas = holder.lockCanvas()
+                        if (canvas != null) {
+                            drawFrame(canvas)
+                        }
                     } finally {
-                        if (c != null) try { surfaceHolder.unlockCanvasAndPost(c) } catch (_: Throwable) {}
+                        if (canvas != null) holder.unlockCanvasAndPost(canvas)
                     }
-
-                    try { Thread.sleep(frameDelayMs.toLong()) } catch (_: InterruptedException) {}
-                    t += baseStep * 0.1
+                    try {
+                        Thread.sleep((40L - speed * 3).coerceAtLeast(5L))
+                    } catch (_: InterruptedException) { }
                 }
             }
-            drawThread?.start()
+            thread?.start()
         }
 
-        private fun stop() {
-            running = false
-            drawThread?.interrupt()
-            drawThread = null
+        private fun stopDrawing() {
+            visible = false
+            thread?.interrupt()
+            thread = null
         }
 
         private fun drawFrame(canvas: Canvas) {
-            // خلفية داكنة خفيفة بدل السواد الكامل
-            canvas.drawColor(Color.rgb(12,12,12))
-            canvas.save()
-            applyEffectPre(canvas)
-
+            canvas.drawColor(Color.BLACK)
             when (pattern) {
                 "تدرج لوني" -> drawGradient(canvas)
                 "تغير لون" -> drawColorShift(canvas)
-                "جسيمات"   -> drawParticles(canvas)
-                "موجات"    -> drawWaves(canvas)
-                else       -> drawGradient(canvas)
-            }
-
-            canvas.restore()
-        }
-
-        private fun applyEffectPre(canvas: Canvas) {
-            if (effect == "دوران") {
-                val angle = (t * 30.0).toFloat()
-                canvas.rotate(angle, canvas.width/2f, canvas.height/2f)
+                "جسيمات" -> drawParticles(canvas)
+                "موجات" -> drawWaves(canvas)
             }
         }
 
-        private fun applyAlpha() {
-            when (effect) {
-                "بدون"   -> paint.alpha = 255
-                "شفافية" -> paint.alpha = 140
-                "وميض"   -> {
-                    val a = (127.5 * (1 + kotlin.math.sin(t * 2 * Math.PI))).toInt()
-                    paint.alpha = 60 + (a/2)
-                }
-                else -> paint.alpha = 255
-            }
-        }
-
-        /** أنماط الرسم **/
         private fun drawGradient(canvas: Canvas) {
-            val w = canvas.width.toFloat()
-            val h = canvas.height.toFloat()
-            val c1 = resolveBaseColor()
-            val c2 = lightenOrDarken(c1, 0.35f)
+            val width = canvas.width.toFloat()
+            val height = canvas.height.toFloat()
 
-            val shift = ((kotlin.math.sin(t) + 1) / 2f)
-            val (x0,y0,x1,y1) = when (direction) {
-                "يمين" -> Quad(0f, 0f, w * shift, h)
-                "يسار" -> Quad(w, 0f, w * (1 - shift), h)
-                "أعلى" -> Quad(0f, h, w, h * (1 - shift))
-                "أسفل" -> Quad(0f, 0f, w, h * shift)
-                else   -> Quad(0f, 0f, w, h)
-            }
-
-            val shader = LinearGradient(x0, y0, x1, y1, c1, c2, Shader.TileMode.CLAMP)
-            paint.shader = shader
-            applyAlpha()
-            canvas.drawRect(0f, 0f, w, h, paint)
-            paint.shader = null
-            paint.alpha = 255
-        }
-
-        private fun drawColorShift(canvas: Canvas) {
-            colorLerp += (baseStep * 0.02f).toFloat() // بطيء وسلس
             if (colorLerp >= 1f) {
                 currentColor = targetColor
                 targetColor = pickTargetColor()
                 colorLerp = 0f
+            } else {
+                colorLerp += 0.01f * (speed + 1)
             }
-            val blended = lerpColor(currentColor, targetColor, colorLerp)
+
+            val blended = blendColors(currentColor, targetColor, colorLerp)
+            val shader = LinearGradient(
+                0f, 0f, width, height,
+                currentColor, blended,
+                Shader.TileMode.MIRROR
+            )
+            paint.shader = shader
+            canvas.drawRect(0f, 0f, width, height, paint)
+        }
+
+        private fun drawColorShift(canvas: Canvas) {
             paint.shader = null
-            applyAlpha()
-            paint.color = blended
+            paint.color = getRandomColor()
             canvas.drawRect(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(), paint)
-            paint.alpha = 255
         }
 
         private fun drawParticles(canvas: Canvas) {
-            ensureParticleCount()
-            applyAlpha()
             paint.shader = null
+            paint.style = Paint.Style.FILL
             for (p in particles) {
-                p.x += p.vx * speed
-                p.y += p.vy * speed
-
-                if (p.x < -p.r) p.x = canvas.width + p.r
-                if (p.x > canvas.width + p.r) p.x = -p.r
-                if (p.y < -p.r) p.y = canvas.height + p.r
-                if (p.y > canvas.height + p.r) p.y = -p.r
-
                 paint.color = p.color
                 canvas.drawCircle(p.x, p.y, p.r, paint)
+                p.x += p.vx
+                p.y += p.vy
+                if (p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
+                    resetParticle(p, canvas.width, canvas.height)
+                }
             }
-            paint.alpha = 255
         }
 
         private fun drawWaves(canvas: Canvas) {
-            applyAlpha()
             paint.shader = null
             paint.style = Paint.Style.STROKE
-            paint.strokeWidth = 2f + size * 0.05f
-            paint.color = resolveBaseColor()
+            paint.strokeWidth = 4f
+            paint.color = getColorFromName(colorName)
 
-            val amp = 20f + size * 2f
-            val freq = (2 * Math.PI / (150.0 + 5 * size)).toFloat()
-            val mid = canvas.height/2f
-            val phase = (t * 4).toFloat()
-
-            val path = Path().apply { moveTo(0f, mid) }
-            for (x in 0..canvas.width step 8) {
-                val y = (mid + amp * kotlin.math.sin(freq * x + phase)).toFloat()
+            val amplitude = size.toFloat()
+            val frequency = 2 * PI / 200
+            val height = canvas.height / 2f
+            val path = Path()
+            path.moveTo(0f, height)
+            for (x in 0..canvas.width step 10) {
+                val y = (height + amplitude * sin(frequency * x + System.currentTimeMillis() / 300.0)).toFloat()
                 path.lineTo(x.toFloat(), y)
             }
             canvas.drawPath(path, paint)
-
-            // موجة ثانية خفيفة
-            paint.color = lightenOrDarken(paint.color, 0.25f)
-            val path2 = Path().apply { moveTo(0f, mid) }
-            for (x in 0..canvas.width step 8) {
-                val y = (mid + (amp*0.7f) * kotlin.math.sin(freq * x + phase + 1.2f)).toFloat()
-                path2.lineTo(x.toFloat(), y)
-            }
-            canvas.drawPath(path2, paint)
-
-            paint.style = Paint.Style.FILL
-            paint.alpha = 255
         }
 
-        /** تهيئة/مساعدة **/
+        private fun getColorFromName(name: String): Int {
+            return when (name) {
+                "أحمر" -> Color.RED
+                "أزرق" -> Color.BLUE
+                "أخضر" -> Color.GREEN
+                "أصفر" -> Color.YELLOW
+                "بنفسجي" -> Color.MAGENTA
+                "سماوي" -> Color.CYAN
+                else -> getRandomColor()
+            }
+        }
+
+        private fun getRandomColor(): Int {
+            val rnd = Random.Default
+            return Color.rgb(rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+        }
+
+        private fun blendColors(c1: Int, c2: Int, ratio: Float): Int {
+            val inv = 1 - ratio
+            val a = (Color.alpha(c1) * inv + Color.alpha(c2) * ratio).toInt()
+            val r = (Color.red(c1) * inv + Color.red(c2) * ratio).toInt()
+            val g = (Color.green(c1) * inv + Color.green(c2) * ratio).toInt()
+            val b = (Color.blue(c1) * inv + Color.blue(c2) * ratio).toInt()
+            return Color.argb(a, r, g, b)
+        }
+
+        private fun pickTargetColor(): Int {
+            return if (colorName == "عشوائي") getRandomColor() else getColorFromName(colorName)
+        }
+
         private fun initParticles() {
             particles.clear()
-            val n = (density.coerceIn(1,10) * 25) // 25..250
-            val baseR = 2f + size * 0.2f
-            val (dx,dy) = dirVector()
-            repeat(n) {
-                val r = baseR * (0.5f + Random.nextFloat())
-                val speedUnit = 0.2f + Random.nextFloat() * 0.8f
-                particles += Particle(
-                    x = Random.nextFloat()* 1080f,
-                    y = Random.nextFloat()* 1920f,
-                    vx = dx * speedUnit,
-                    vy = dy * speedUnit,
-                    r = r,
-                    color = if (colorName == "عشوائي") randColor() else resolveBaseColor()
+            val w = 1080
+            val h = 1920
+            repeat(density * 20) {
+                val p = Particle(
+                    Random.nextInt(w).toFloat(),
+                    Random.nextInt(h).toFloat(),
+                    Random.nextFloat() * 4f - 2f,
+                    Random.nextFloat() * 4f - 2f,
+                    size.toFloat(),
+                    getRandomColor()
                 )
+                particles.add(p)
             }
         }
 
-        private fun ensureParticleCount() {
-            val wanted = (density.coerceIn(1,10) * 25)
-            if (particles.size != wanted) initParticles()
+        private fun resetParticle(p: Particle, w: Int, h: Int) {
+            p.x = Random.nextInt(w).toFloat()
+            p.y = Random.nextInt(h).toFloat()
+            p.vx = Random.nextFloat() * 4f - 2f
+            p.vy = Random.nextFloat() * 4f - 2f
+            p.r = size.toFloat()
+            p.color = getRandomColor()
         }
 
-        private fun dirVector(): Pair<Float, Float> = when(direction) {
-            "يمين" -> 1f to 0f
-            "يسار" -> -1f to 0f
-            "أعلى" -> 0f to -1f
-            "أسفل" -> 0f to 1f
-            else   -> 1f to 0f
-        }
-
-        private fun resolveBaseColor(): Int = when (colorName) {
-            "أحمر"   -> Color.rgb(220, 20, 60)
-            "أزرق"   -> Color.rgb(33, 150, 243)
-            "أخضر"   -> Color.rgb(76, 175, 80)
-            "أصفر"   -> Color.rgb(255, 235, 59)
-            "بنفسجي" -> Color.rgb(156, 39, 176)
-            "سماوي"  -> Color.rgb(0, 188, 212)
-            "عشوائي" -> randColor()
-            else     -> Color.rgb(120,120,120)
-        }
-
-        private fun randColor(): Int =
-            Color.rgb(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
-
-        private fun lightenOrDarken(color: Int, amount: Float): Int {
-            val r = Color.red(color); val g = Color.green(color); val b = Color.blue(color)
-            val factor = (1 + amount).coerceAtLeast(0f)
-            val nr = (r * factor).coerceIn(0f, 255f).toInt()
-            val ng = (g * factor).coerceIn(0f, 255f).toInt()
-            val nb = (b * factor).coerceIn(0f, 255f).toInt()
-            return Color.rgb(nr, ng, nb)
-        }
-
-        private fun lerpColor(a: Int, b: Int, t: Float): Int {
-            val tt = t.coerceIn(0f,1f)
-            val ar = Color.red(a); val ag = Color.green(a); val ab = Color.blue(a)
-            val br = Color.red(b); val bg = Color.green(b); val bb = Color.blue(b)
-            val rr = (ar + (br - ar) * tt).toInt()
-            val rg = (ag + (bg - ag) * tt).toInt()
-            val rb = (ab + (bb - ab) * tt).toInt()
-            return Color.rgb(rr, rg, rb)
-        }
-
-        private fun pickTargetColor(): Int =
-            if (colorName == "عشوائي") randColor() else lightenOrDarken(resolveBaseColor(), 0.5f)
-
-        /** تحديث حي عند تغيير الإعدادات من الواجهة **/
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
             when (key) {
-                "pattern" -> pattern = prefs.getString("pattern","تدرج لوني") ?: "تدرج لوني"
+                "pattern" -> pattern = prefs.getString("pattern", "تدرج لوني") ?: "تدرج لوني"
                 "color" -> {
-                    colorName = prefs.getString("color","عشوائي") ?: "عشوائي"
-                    currentColor = resolveBaseColor()
+                    colorName = prefs.getString("color", "عشوائي") ?: "عشوائي"
+                    currentColor = getColorFromName(colorName)
                     targetColor = pickTargetColor()
                     colorLerp = 0f
                     initParticles()
                 }
-                "direction" -> { direction = prefs.getString("direction","يمين") ?: "يمين"; initParticles() }
-                "effect" -> effect = prefs.getString("effect","بدون") ?: "بدون"
-                "speed" -> speed = prefs.getInt("speed",5)
-                "size" -> { size = prefs.getInt("size",50); initParticles() }
-                "density" -> { density = prefs.getInt("density",5); initParticles() }
+                "direction" -> direction = prefs.getString("direction", "يمين") ?: "يمين"
+                "effect" -> effect = prefs.getString("effect", "بدون") ?: "بدون"
+                "speed" -> speed = prefs.getInt("speed", 5)
+                "size" -> { size = prefs.getInt("size", 50); initParticles() }
+                "density" -> { density = prefs.getInt("density", 5); initParticles() }
             }
         }
 
-        /** مساعد صغير لتعريف رباعية قيم */
-        private data class Quad(val x0: Float, val y0: Float, val x1: Float, val y1: Float)
+        // تعريفات الجسيمات
+        private data class Particle(
+            var x: Float, var y: Float,
+            var vx: Float, var vy: Float,
+            var r: Float, var color: Int
+        )
     }
 }
