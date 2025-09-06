@@ -9,8 +9,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.UltimateLiveWallpaper">
 
-        <!-- النشاط الرئيسي -->
-        <activity android:name=".MainActivity">
+        <!-- Main Activity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -20,7 +22,8 @@
         <!-- خدمة الخلفية الحية -->
         <service
             android:name=".MultiEngineService"
-            android:permission="android.permission.BIND_WALLPAPER">
+            android:permission="android.permission.BIND_WALLPAPER"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />
             </intent-filter>
