@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.*
 import android.service.wallpaper.WallpaperService
-import android.service.wallpaper.WallpaperService.Engine
 import android.view.SurfaceHolder
 import kotlin.math.PI
 import kotlin.math.sin
@@ -24,14 +23,14 @@ class MultiEngineService : WallpaperService() {
         private var visible = true
         private var thread: Thread? = null
 
-        // إعدادات من الـ SharedPreferences
-        private var pattern = prefs.getString("pattern", "تدرج لوني") ?: "تدرج لوني"
-        private var color = prefs.getString("color", "عشوائي") ?: "عشوائي"
-        private var direction = prefs.getString("direction", "يمين") ?: "يمين"
-        private var effect = prefs.getString("effect", "بدون") ?: "بدون"
-        private var speed = prefs.getInt("speed", 5)
-        private var size = prefs.getInt("size", 50)
-        private var density = prefs.getInt("density", 5)
+        // القيم المبدئية
+        private var pattern = "تدرج لوني"
+        private var color = "عشوائي"
+        private var direction = "يمين"
+        private var effect = "بدون"
+        private var speed = 5
+        private var size = 50
+        private var density = 5
 
         override fun onVisibilityChanged(visible: Boolean) {
             this.visible = visible
@@ -56,9 +55,13 @@ class MultiEngineService : WallpaperService() {
                     } finally {
                         if (canvas != null) holder.unlockCanvasAndPost(canvas)
                     }
+
+                    // زمن التحديث يعتمد على السرعة
+                    val delay = (120L - speed * 10L).coerceAtLeast(15L)
                     try {
-                        Thread.sleep(30)
-                    } catch (_: InterruptedException) { }
+                        Thread.sleep(delay)
+                    } catch (_: InterruptedException) {
+                    }
                 }
             }
             thread?.start()
@@ -71,7 +74,17 @@ class MultiEngineService : WallpaperService() {
         }
 
         private fun drawFrame(canvas: Canvas) {
-            canvas.drawColor(Color.BLACK)
+            // تحديث القيم من SharedPreferences باستمرار
+            pattern = prefs.getString("pattern", pattern) ?: pattern
+            color = prefs.getString("color", color) ?: color
+            direction = prefs.getString("direction", direction) ?: direction
+            effect = prefs.getString("effect", effect) ?: effect
+            speed = prefs.getInt("speed", speed)
+            size = prefs.getInt("size", size)
+            density = prefs.getInt("density", density)
+
+            // خلفية افتراضية حسب اللون
+            canvas.drawColor(getColorFromName(color))
 
             when (pattern) {
                 "تدرج لوني" -> drawGradient(canvas)
@@ -90,12 +103,15 @@ class MultiEngineService : WallpaperService() {
                 Shader.TileMode.MIRROR
             )
             paint.shader = shader
+            applyEffect()
             canvas.drawRect(0f, 0f, width, height, paint)
+            paint.shader = null
         }
 
         private fun drawColorShift(canvas: Canvas) {
             paint.shader = null
             paint.color = getRandomColor()
+            applyEffect()
             canvas.drawRect(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(), paint)
         }
 
@@ -103,6 +119,7 @@ class MultiEngineService : WallpaperService() {
             paint.shader = null
             for (i in 0 until density * 20) {
                 paint.color = getRandomColor()
+                applyEffect()
                 val x = Random.nextInt(canvas.width).toFloat()
                 val y = Random.nextInt(canvas.height).toFloat()
                 canvas.drawCircle(x, y, size.toFloat(), paint)
@@ -114,6 +131,7 @@ class MultiEngineService : WallpaperService() {
             paint.style = Paint.Style.STROKE
             paint.strokeWidth = 4f
             paint.color = getColorFromName(color)
+            applyEffect()
 
             val amplitude = size.toFloat()
             val frequency = 2 * PI / 200
@@ -126,6 +144,24 @@ class MultiEngineService : WallpaperService() {
                 path.lineTo(x.toFloat(), y)
             }
             canvas.drawPath(path, paint)
+            paint.style = Paint.Style.FILL
+        }
+
+        private fun applyEffect() {
+            when (effect) {
+                "وميض" -> {
+                    paint.alpha = if (System.currentTimeMillis() / 300 % 2 == 0L) 120 else 255
+                }
+                "شفافية" -> {
+                    paint.alpha = 150
+                }
+                "دوران" -> {
+                    paint.textSize = 40f
+                    paint.alpha = 255
+                    // ممكن نعمل دوران لاحقًا لعناصر الرسمة
+                }
+                else -> paint.alpha = 255
+            }
         }
 
         private fun getColorFromName(name: String): Int {
