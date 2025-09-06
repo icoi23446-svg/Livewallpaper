@@ -3,7 +3,6 @@
     <string name="app_name">Ultimate Live Wallpaper</string>
     <string name="apply">تطبيق</string>
 
-    <!-- القوائم (spinners) -->
     <string-array name="patterns">
         <item>تدرج لوني</item>
         <item>تغير لون</item>
