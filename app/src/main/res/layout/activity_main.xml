@@ -10,27 +10,87 @@
         android:orientation="vertical"
         android:padding="8dp">
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="النمط"/>
-        <Spinner android:id="@+id/patternSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" android:entries="@array/patterns"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="النمط" />
+        <Spinner
+            android:id="@+id/patternSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/patterns" />
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="اللون" android:layout_marginTop="8dp"/>
-        <Spinner android:id="@+id/colorSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" android:entries="@array/colors"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="اللون"
+            android:layout_marginTop="8dp" />
+        <Spinner
+            android:id="@+id/colorSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/colors" />
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="الاتجاه" android:layout_marginTop="8dp"/>
-        <Spinner android:id="@+id/directionSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" android:entries="@array/directions"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="الاتجاه"
+            android:layout_marginTop="8dp" />
+        <Spinner
+            android:id="@+id/directionSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/directions" />
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="التأثير" android:layout_marginTop="8dp"/>
-        <Spinner android:id="@+id/effectSpinner" android:layout_width="match_parent" android:layout_height="wrap_content" android:entries="@array/effects"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="التأثير"
+            android:layout_marginTop="8dp" />
+        <Spinner
+            android:id="@+id/effectSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/effects" />
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="السرعة" android:layout_marginTop="12dp"/>
-        <SeekBar android:id="@+id/speedSeekBar" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="10"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="السرعة"
+            android:layout_marginTop="12dp" />
+        <SeekBar
+            android:id="@+id/speedSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="10" />
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="الحجم" android:layout_marginTop="12dp"/>
-        <SeekBar android:id="@+id/sizeSeekBar" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="100"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="الحجم"
+            android:layout_marginTop="12dp" />
+        <SeekBar
+            android:id="@+id/sizeSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100" />
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="الكثافة" android:layout_marginTop="12dp"/>
-        <SeekBar android:id="@+id/densitySeekBar" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="10"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="الكثافة"
+            android:layout_marginTop="12dp" />
+        <SeekBar
+            android:id="@+id/densitySeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="10" />
 
-        <Button android:id="@+id/applyButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/apply" android:layout_marginTop="16dp"/>
+        <Button
+            android:id="@+id/applyButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/apply"
+            android:layout_marginTop="16dp" />
     </LinearLayout>
 </ScrollView>
