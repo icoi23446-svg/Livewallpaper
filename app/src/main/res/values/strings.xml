@@ -1,25 +1,23 @@
 <resources>
-    <!-- اسم التطبيق -->
     <string name="app_name">Ultimate Live Wallpaper</string>
-
-    <!-- الأزرار -->
     <string name="apply">تطبيق الخلفية</string>
 
     <!-- التسميات -->
     <string name="pattern_label">النمط</string>
     <string name="color_label">اللون</string>
+    <string name="direction_label">الاتجاه</string>
+    <string name="effect_label">التأثير</string>
+    <string name="theme_label">الثيم</string>
     <string name="speed_label">السرعة</string>
     <string name="size_label">الحجم</string>
     <string name="density_label">الكثافة</string>
-    <string name="direction_label">الاتجاه</string>
-    <string name="effect_label">التأثير</string>
 
     <!-- الأنماط -->
     <string-array name="patterns_array">
-        <item>تدرج لوني</item>
-        <item>تغير لون</item>
-        <item>جسيمات</item>
-        <item>موجات</item>
+        <item>Animated Gradient</item>
+        <item>Color Cycle</item>
+        <item>Particles</item>
+        <item>Waves</item>
     </string-array>
 
     <!-- الألوان -->
@@ -47,5 +45,12 @@
         <item>وميض</item>
         <item>دوران</item>
         <item>شفافية</item>
+    </string-array>
+
+    <!-- الثيم -->
+    <string-array name="theme_array">
+        <item>تلقائي</item>
+        <item>فاتح</item>
+        <item>ليلي</item>
     </string-array>
 </resources>
