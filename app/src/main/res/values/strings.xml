@@ -1,48 +1,11 @@
 <resources>
     <string name="app_name">Ultimate Live Wallpaper</string>
-    <string name="apply">تطبيق الخلفية</string>
 
-    <!-- عناوين -->
-    <string name="choose_pattern">اختر النمط:</string>
-    <string name="choose_color">اختر اللون:</string>
-    <string name="choose_direction">الاتجاه:</string>
-    <string name="choose_effect">التأثير:</string>
-    <string name="speed">السرعة:</string>
-    <string name="size">الحجم:</string>
-    <string name="density">الكثافة:</string>
-
-    <!-- الأنماط -->
-    <string-array name="patterns_array">
-        <item>تدرج لوني</item>
-        <item>تغير لون</item>
-        <item>جسيمات</item>
-        <item>موجات</item>
-    </string-array>
-
-    <!-- الألوان -->
-    <string-array name="colors_array">
-        <item>أحمر</item>
-        <item>أزرق</item>
-        <item>أخضر</item>
-        <item>أصفر</item>
-        <item>بنفسجي</item>
-        <item>سماوي</item>
-        <item>عشوائي</item>
-    </string-array>
-
-    <!-- الاتجاهات -->
-    <string-array name="direction_array">
-        <item>أعلى</item>
-        <item>أسفل</item>
-        <item>يمين</item>
-        <item>يسار</item>
-    </string-array>
-
-    <!-- التأثيرات -->
-    <string-array name="effects_array">
-        <item>بدون</item>
-        <item>وميض</item>
-        <item>دوران</item>
-        <item>شفافية</item>
-    </string-array>
+    <string name="pattern">النمط</string>
+    <string name="color">اللون</string>
+    <string name="speed">السرعة</string>
+    <string name="size">الحجم</string>
+    <string name="density">الكثافة</string>
+    <string name="direction">الاتجاه</string>
+    <string name="effect">التأثير</string>
 </resources>
