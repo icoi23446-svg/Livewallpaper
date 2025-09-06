@@ -1,8 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#90CAF9</color> <!-- أزرق فاتح -->
-    <color name="colorPrimaryDark">#42A5F5</color>
-    <color name="colorAccent">#FF80AB</color> <!-- وردي فاتح -->
-    <color name="colorBackground">#121212</color> <!-- خلفية داكنة -->
-    <color name="colorText">#E0E0E0</color> <!-- رمادي فاتح -->
-    <color name="colorButtonText">#000000</color> <!-- أسود -->
+    <color name="background">#121212</color>
+    <color name="textColor">#FFFFFF</color>
+    <color name="buttonColor">#BB86FC</color>
 </resources>
