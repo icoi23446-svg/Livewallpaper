@@ -1,79 +1,127 @@
 package com.example.livewallpaper
 
-import android.app.WallpaperManager
+import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var prefs: SharedPreferences
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        prefs = getSharedPreferences("WallpaperSettings", MODE_PRIVATE)
+        val prefs = getSharedPreferences("WallpaperSettings", Context.MODE_PRIVATE)
 
-        // عناصر الواجهة
-        val patternSpinner = findViewById<Spinner>(R.id.patternSpinner)
-        val colorSpinner = findViewById<Spinner>(R.id.colorSpinner)
-        val directionSpinner = findViewById<Spinner>(R.id.directionSpinner)
-        val effectSpinner = findViewById<Spinner>(R.id.effectSpinner)
-        val speedSeek = findViewById<SeekBar>(R.id.speedSeekBar)
-        val sizeSeek = findViewById<SeekBar>(R.id.sizeSeekBar)
-        val densitySeek = findViewById<SeekBar>(R.id.densitySeekBar)
-        val applyButton = findViewById<Button>(R.id.applyButton)
+        // 🔹 Spinner لاختيار النمط
+        val patternSpinner: Spinner = findViewById(R.id.patternSpinner)
+        val patterns = arrayOf(
+            "Animated Gradient",
+            "Smooth Gradient",   // ✅ الجديد (تدرج أنعم)
+            "Color Cycle",
+            "Particles",
+            "Waves"
+        )
+        val patternAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, patterns)
+        patternAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        patternSpinner.adapter = patternAdapter
+        patternSpinner.setSelection(patterns.indexOf(prefs.getString("pattern", "Animated Gradient")))
+        patternSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                prefs.edit().putString("pattern", patterns[position]).apply()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
 
-        // تحميل القيم المخزنة مسبقاً
-        patternSpinner.setSelection(getIndex(patternSpinner, prefs.getString("pattern", "تدرج لوني")))
-        colorSpinner.setSelection(getIndex(colorSpinner, prefs.getString("color", "أزرق")))
-        directionSpinner.setSelection(getIndex(directionSpinner, prefs.getString("direction", "يمين")))
-        effectSpinner.setSelection(getIndex(effectSpinner, prefs.getString("effect", "بدون")))
+        // 🔹 Spinner لاختيار اللون
+        val colorSpinner: Spinner = findViewById(R.id.colorSpinner)
+        val colors = arrayOf("أزرق", "أحمر", "أخضر", "أصفر", "بنفسجي", "سماوي", "عشوائي")
+        val colorAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, colors)
+        colorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        colorSpinner.adapter = colorAdapter
+        colorSpinner.setSelection(colors.indexOf(prefs.getString("color", "أزرق")))
+        colorSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                prefs.edit().putString("color", colors[position]).apply()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        // 🔹 Slider السرعة
+        val speedSeek: SeekBar = findViewById(R.id.speedSeek)
         speedSeek.progress = prefs.getInt("speed", 5)
+        speedSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                prefs.edit().putInt("speed", progress).apply()
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        // 🔹 Slider الحجم
+        val sizeSeek: SeekBar = findViewById(R.id.sizeSeek)
         sizeSeek.progress = prefs.getInt("size", 50)
+        sizeSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                prefs.edit().putInt("size", progress).apply()
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        // 🔹 Slider الكثافة
+        val densitySeek: SeekBar = findViewById(R.id.densitySeek)
         densitySeek.progress = prefs.getInt("density", 5)
+        densitySeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                prefs.edit().putInt("density", progress).apply()
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
 
-        // زر تطبيق الخلفية
-        applyButton.setOnClickListener {
-            val editor = prefs.edit()
-            editor.putString("pattern", patternSpinner.selectedItem.toString())
-            editor.putString("color", colorSpinner.selectedItem.toString())
-            editor.putString("direction", directionSpinner.selectedItem.toString())
-            editor.putString("effect", effectSpinner.selectedItem.toString())
-            editor.putInt("speed", speedSeek.progress)
-            editor.putInt("size", sizeSeek.progress)
-            editor.putInt("density", densitySeek.progress)
-            editor.apply()
+        // 🔹 Spinner الاتجاه
+        val directionSpinner: Spinner = findViewById(R.id.directionSpinner)
+        val directions = arrayOf("يمين", "يسار", "أعلى", "أسفل")
+        val directionAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, directions)
+        directionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        directionSpinner.adapter = directionAdapter
+        directionSpinner.setSelection(directions.indexOf(prefs.getString("direction", "يمين")))
+        directionSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                prefs.edit().putString("direction", directions[position]).apply()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
 
-            // فتح شاشة تعيين الخلفية الحية
+        // 🔹 Spinner التأثير
+        val effectSpinner: Spinner = findViewById(R.id.effectSpinner)
+        val effects = arrayOf("بدون", "وميض", "دوران", "شفافية")
+        val effectAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, effects)
+        effectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        effectSpinner.adapter = effectAdapter
+        effectSpinner.setSelection(effects.indexOf(prefs.getString("effect", "بدون")))
+        effectSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                prefs.edit().putString("effect", effects[position]).apply()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        // 🔹 زر لتعيين الخلفية الحية
+        val setWallpaperBtn: Button = findViewById(R.id.setWallpaperBtn)
+        setWallpaperBtn.setOnClickListener {
             try {
-                val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER).apply {
-                    putExtra(
-                        WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-                        android.content.ComponentName(
-                            this@MainActivity,
-                            MultiEngineService::class.java
-                        )
-                    )
-                }
-                startActivity(intent)
+                val intent = Intent(WallpaperService.SERVICE_INTERFACE)
+                intent.setClass(this, MultiEngineService::class.java)
+                startActivity(Intent(Intent.ACTION_SET_WALLPAPER))
             } catch (e: Exception) {
-                Toast.makeText(this, "لم يتم دعم الخلفيات الحية على جهازك", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "تعذّر فتح إعدادات الخلفية", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(Settings.ACTION_DISPLAY_SETTINGS))
             }
         }
-    }
-
-    // دالة تساعد على اختيار العنصر الصحيح في الـ Spinner
-    private fun getIndex(spinner: Spinner, value: String?): Int {
-        if (value == null) return 0
-        for (i in 0 until spinner.count) {
-            if (spinner.getItemAtPosition(i).toString().equals(value, ignoreCase = true)) {
-                return i
-            }
-        }
-        return 0
     }
 }
