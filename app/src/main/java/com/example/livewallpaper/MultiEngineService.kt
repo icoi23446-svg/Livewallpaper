@@ -1,170 +1,191 @@
 package com.example.livewallpaper
 
-import android.service.wallpaper.WallpaperService
-import android.graphics.*
-import android.view.SurfaceHolder
 import android.content.Context
-import kotlin.math.*
+import android.content.SharedPreferences
+import android.graphics.*
+import android.service.wallpaper.WallpaperService
+import android.view.SurfaceHolder
+import kotlin.math.sin
+import kotlin.math.cos
+import kotlin.math.PI
 import kotlin.random.Random
 
 class MultiEngineService : WallpaperService() {
+
     override fun onCreateEngine(): Engine {
-        return FancyEngine(this)
+        return MultiEngine(this)
     }
 
-    inner class FancyEngine(private val context: Context) : Engine() {
+    class MultiEngine(private val context: Context) : Engine() {
+
+        private val prefs: SharedPreferences =
+            context.getSharedPreferences("WallpaperSettings", Context.MODE_PRIVATE)
+
         private val paint = Paint()
-        private val gradientPaint = Paint()
-        private val matrix = Matrix()
-        private var handler = android.os.Handler()
         private var running = true
+        private var thread: Thread? = null
 
-        // الإعدادات من SharedPreferences
-        private val prefs = context.getSharedPreferences("WallpaperSettings", Context.MODE_PRIVATE)
+        // إعدادات
+        private var pattern: String = "Animated Gradient"
+        private var color: String = "Random"
+        private var speed: Int = 5
+        private var size: Int = 50
+        private var density: Int = 5
+        private var direction: String = "Right"
+        private var effect: String = "None"
 
-        private var pattern = prefs.getString("pattern", "تدرج لوني") ?: "تدرج لوني"
-        private var colorName = prefs.getString("color", "أزرق") ?: "أزرق"
-        private var direction = prefs.getString("direction", "يمين") ?: "يمين"
-        private var effect = prefs.getString("effect", "بدون") ?: "بدون"
-        private var speed = prefs.getInt("speed", 5)
-        private var size = prefs.getInt("size", 50)
-        private var density = prefs.getInt("density", 5)
-
+        // بيانات للرسم
+        private var gradientShift = 0f
         private val particles = mutableListOf<Particle>()
+        private var waveOffset = 0f
 
-        private val drawRunner = object : Runnable {
-            override fun run() {
-                drawFrame()
-                if (running) handler.postDelayed(this, 30)
-            }
-        }
-
-        override fun onVisibilityChanged(visible: Boolean) {
-            running = visible
-            if (visible) {
-                handler.post(drawRunner)
-            } else {
-                handler.removeCallbacks(drawRunner)
-            }
+        override fun onCreate(surfaceHolder: SurfaceHolder) {
+            super.onCreate(surfaceHolder)
+            loadSettings()
+            startDrawing()
         }
 
         override fun onDestroy() {
             super.onDestroy()
+            stopDrawing()
+        }
+
+        override fun onVisibilityChanged(visible: Boolean) {
+            if (visible) startDrawing() else stopDrawing()
+        }
+
+        // تحميل الإعدادات
+        private fun loadSettings() {
+            pattern = prefs.getString("pattern", "Animated Gradient") ?: "Animated Gradient"
+            color = prefs.getString("color", "Random") ?: "Random"
+            speed = prefs.getInt("speed", 5)
+            size = prefs.getInt("size", 50)
+            density = prefs.getInt("density", 5)
+            direction = prefs.getString("direction", "Right") ?: "Right"
+            effect = prefs.getString("effect", "None") ?: "None"
+        }
+
+        // تشغيل الرسم
+        private fun startDrawing() {
+            running = true
+            thread = Thread {
+                while (running) {
+                    val holder = surfaceHolder
+                    val canvas = holder.lockCanvas()
+                    if (canvas != null) {
+                        drawFrame(canvas)
+                        holder.unlockCanvasAndPost(canvas)
+                    }
+                    try {
+                        Thread.sleep((40L - speed).coerceAtLeast(5L))
+                    } catch (_: InterruptedException) { }
+                }
+            }
+            thread?.start()
+        }
+
+        private fun stopDrawing() {
             running = false
-            handler.removeCallbacks(drawRunner)
+            thread?.interrupt()
         }
 
-        private fun drawFrame() {
-            val holder: SurfaceHolder = surfaceHolder
-            var canvas: Canvas? = null
-            try {
-                canvas = holder.lockCanvas()
-                if (canvas != null) {
-                    drawPattern(canvas)
-                }
-            } finally {
-                if (canvas != null) holder.unlockCanvasAndPost(canvas)
-            }
-        }
+        // رسم الخلفية
+        private fun drawFrame(canvas: Canvas) {
+            canvas.drawColor(Color.BLACK)
 
-        private fun drawPattern(canvas: Canvas) {
             when (pattern) {
-                "تدرج لوني" -> drawGradient(canvas)
-                "تغير لون" -> drawColorShift(canvas)
-                "جسيمات" -> drawParticles(canvas)
-                "موجات" -> drawWaves(canvas)
-                else -> drawGradient(canvas)
+                "Animated Gradient", "تدرج لوني" -> drawGradient(canvas)
+                "Color Cycle", "تغير لون" -> drawColorCycle(canvas)
+                "Particles", "جسيمات" -> drawParticles(canvas)
+                "Waves", "موجات" -> drawWaves(canvas)
             }
         }
 
+        // 🎨 1. التدرج اللوني الناعم
         private fun drawGradient(canvas: Canvas) {
-            val w = canvas.width.toFloat()
-            val h = canvas.height.toFloat()
-            val gradient = LinearGradient(
-                0f, 0f, if (direction == "يمين") w else 0f, if (direction == "أسفل") h else 0f,
-                intArrayOf(Color.RED, Color.BLUE, Color.GREEN, Color.MAGENTA),
-                null,
-                Shader.TileMode.MIRROR
+            gradientShift += 0.01f * speed
+            val colors = intArrayOf(
+                Color.RED, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.CYAN
             )
-            gradientPaint.shader = gradient
-            canvas.drawRect(0f, 0f, w, h, gradientPaint)
+            val shader = LinearGradient(
+                0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(),
+                colors, null, Shader.TileMode.MIRROR
+            )
+            paint.shader = shader
+            canvas.drawRect(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(), paint)
         }
 
-        private fun drawColorShift(canvas: Canvas) {
-            val w = canvas.width.toFloat()
-            val h = canvas.height.toFloat()
-            val time = System.currentTimeMillis() % 10000L / 10000f
-            val color = Color.HSVToColor(floatArrayOf(time * 360f, 1f, 1f))
-            canvas.drawColor(color)
+        // 🎨 2. تغيير الألوان
+        private fun drawColorCycle(canvas: Canvas) {
+            val baseColor = when (color) {
+                "أحمر", "Red" -> Color.RED
+                "أزرق", "Blue" -> Color.BLUE
+                "أخضر", "Green" -> Color.GREEN
+                "أصفر", "Yellow" -> Color.YELLOW
+                "بنفسجي", "Purple" -> Color.MAGENTA
+                "سماوي", "Cyan" -> Color.CYAN
+                else -> Color.rgb(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
+            }
+            paint.color = baseColor
+            canvas.drawRect(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(), paint)
         }
 
+        // 🎨 3. الجسيمات
         private fun drawParticles(canvas: Canvas) {
-            val w = canvas.width
-            val h = canvas.height
-
-            if (particles.isEmpty()) {
-                repeat(density * 20) {
-                    particles.add(Particle.random(w, h, size))
-                }
+            if (particles.size < density * 10) {
+                particles.add(Particle(canvas.width, canvas.height))
             }
 
-            canvas.drawColor(Color.BLACK)
-
-            paint.color = colorFromName(colorName)
-            paint.style = Paint.Style.FILL
-
-            for (p in particles) {
-                canvas.drawCircle(p.x, p.y, size / 10f, paint)
-                p.x += p.vx * speed
-                p.y += p.vy * speed
-                if (p.x !in 0f..w.toFloat() || p.y !in 0f..h.toFloat()) {
-                    p.x = Random.nextInt(w).toFloat()
-                    p.y = Random.nextInt(h).toFloat()
+            val iter = particles.iterator()
+            while (iter.hasNext()) {
+                val p = iter.next()
+                p.update(speed)
+                paint.color = p.color
+                canvas.drawCircle(p.x, p.y, size / 5f, paint)
+                if (p.isOffScreen(canvas.width, canvas.height)) {
+                    iter.remove()
                 }
             }
         }
 
+        // 🎨 4. الموجات
         private fun drawWaves(canvas: Canvas) {
-            val w = canvas.width
-            val h = canvas.height
-            val time = System.currentTimeMillis() / 100f
-
-            canvas.drawColor(Color.BLACK)
-            paint.color = colorFromName(colorName)
+            waveOffset += 0.1f * speed
+            paint.color = Color.CYAN
+            paint.style = Paint.Style.STROKE
             paint.strokeWidth = 3f
 
-            val centerY = h / 2f
-            for (x in 0 until w step 5) {
-                val y = (sin((x + time) * 0.05) * 50 + centerY).toFloat()
-                canvas.drawCircle(x.toFloat(), y, 5f, paint)
+            val centerY = canvas.height / 2f
+            val amplitude = size.toFloat()
+            val wavelength = 100f
+
+            val path = Path()
+            path.moveTo(0f, centerY)
+
+            for (x in 0 until canvas.width step 10) {
+                val y = centerY + amplitude * sin((x + waveOffset).toDouble() / wavelength * 2 * PI).toFloat()
+                path.lineTo(x.toFloat(), y)
             }
+
+            canvas.drawPath(path, paint)
+        }
+    }
+
+    // ✅ الكلاس Particle اتنقل برة أي function
+    class Particle(private val width: Int, private val height: Int) {
+        var x = Random.nextFloat() * width
+        var y = Random.nextFloat() * height
+        private val dx = Random.nextFloat() * 4 - 2
+        private val dy = Random.nextFloat() * 4 - 2
+        val color: Int = Color.rgb(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
+
+        fun update(speed: Int) {
+            x += dx * (speed / 5f)
+            y += dy * (speed / 5f)
         }
 
-        private fun colorFromName(name: String): Int {
-            return when (name.lowercase()) {
-                "أحمر", "red" -> Color.RED
-                "أخضر", "green" -> Color.GREEN
-                "أصفر", "yellow" -> Color.YELLOW
-                "بنفسجي", "purple" -> Color.MAGENTA
-                "سماوي", "cyan" -> Color.CYAN
-                "أزرق", "blue" -> Color.BLUE
-                "عشوائي", "random" -> Color.rgb(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
-                else -> Color.BLUE
-            }
-        }
-
-        // ✅ مكان الكلاس الصحيح هنا
-        private data class Particle(var x: Float, var y: Float, var vx: Float, var vy: Float) {
-            companion object {
-                fun random(w: Int, h: Int, size: Int): Particle {
-                    val rnd = Random
-                    val x = rnd.nextInt(w).toFloat()
-                    val y = rnd.nextInt(h).toFloat()
-                    val vx = (rnd.nextFloat() - 0.5f) * 4f
-                    val vy = (rnd.nextFloat() - 0.5f) * 4f
-                    return Particle(x, y, vx, vy)
-                }
-            }
+        fun isOffScreen(maxW: Int, maxH: Int): Boolean {
+            return (x < 0 || y < 0 || x > maxW || y > maxH)
         }
     }
 }
