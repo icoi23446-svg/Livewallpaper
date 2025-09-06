@@ -1,24 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Ultimate Live Wallpaper</string>
-    <string name="apply">تطبيق</string>
-    <string name="pattern_label">النمط</string>
-    <string name="color_label">اللون</string>
-    <string name="speed_label">السرعة</string>
+    <string name="apply">Apply</string>
 
-    <!-- الأنماط -->
+    <!-- Labels -->
+    <string name="pattern_label">Pattern</string>
+    <string name="color_label">Color</string>
+    <string name="speed_label">Speed</string>
+
+    <!-- Patterns -->
     <string-array name="patterns">
-        <item>تدرج لوني</item>
-        <item>تغير لون</item>
+        <item>Gradient</item>
+        <item>Color Shift</item>
     </string-array>
 
-    <!-- الألوان -->
+    <!-- Colors -->
     <string-array name="colors">
-        <item>أحمر</item>
-        <item>أزرق</item>
-        <item>أخضر</item>
-        <item>أصفر</item>
-        <item>بنفسجي</item>
-        <item>سماوي</item>
-        <item>عشوائي</item>
+        <item>Red</item>
+        <item>Blue</item>
+        <item>Green</item>
+        <item>Yellow</item>
+        <item>Purple</item>
+        <item>Cyan</item>
+        <item>Random</item>
     </string-array>
 </resources>
