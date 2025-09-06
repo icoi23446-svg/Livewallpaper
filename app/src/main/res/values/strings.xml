@@ -1,17 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- اسم التطبيق -->
     <string name="app_name">Ultimate Live Wallpaper</string>
 
-    <!-- القوائم -->
-    <string name="pattern">النمط</string>
+    <!-- الأنماط -->
     <string-array name="patterns">
-        <item>Animated Gradient</item>
-        <item>Color Cycle</item>
-        <item>Particles</item>
-        <item>Waves</item>
+        <item>تدرج لوني</item>
+        <item>تغير لون</item>
+        <item>جسيمات</item>
+        <item>موجات</item>
     </string-array>
 
-    <string name="color">اللون</string>
+    <!-- الألوان -->
     <string-array name="colors">
         <item>أحمر</item>
         <item>أزرق</item>
@@ -22,7 +22,7 @@
         <item>عشوائي</item>
     </string-array>
 
-    <string name="direction">الاتجاه</string>
+    <!-- الاتجاهات -->
     <string-array name="directions">
         <item>يمين</item>
         <item>يسار</item>
@@ -30,7 +30,7 @@
         <item>أسفل</item>
     </string-array>
 
-    <string name="effect">التأثير</string>
+    <!-- التأثيرات -->
     <string-array name="effects">
         <item>بدون</item>
         <item>وميض</item>
@@ -38,11 +38,4 @@
         <item>شفافية</item>
     </string-array>
 
-    <!-- الشرائح -->
-    <string name="speed">السرعة</string>
-    <string name="size">الحجم</string>
-    <string name="density">الكثافة</string>
-
-    <!-- الأزرار -->
-    <string name="apply">تطبيق</string>
 </resources>
