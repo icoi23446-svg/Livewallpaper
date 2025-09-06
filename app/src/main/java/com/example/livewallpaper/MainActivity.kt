@@ -18,59 +18,99 @@ class MainActivity : AppCompatActivity() {
         prefs = getSharedPreferences("WallpaperSettings", MODE_PRIVATE)
 
         // عناصر الواجهة
-        val spinnerPattern: Spinner = findViewById(R.id.spinnerPattern)
-        val spinnerColor: Spinner = findViewById(R.id.spinnerColor)
-        val spinnerDirection: Spinner = findViewById(R.id.spinnerDirection)
-        val spinnerEffect: Spinner = findViewById(R.id.spinnerEffect)
+        val patternSpinner: Spinner = findViewById(R.id.patternSpinner)
+        val colorSpinner: Spinner = findViewById(R.id.colorSpinner)
+        val speedSeek: SeekBar = findViewById(R.id.speedSeekBar)
+        val sizeSeek: SeekBar = findViewById(R.id.sizeSeekBar)
+        val densitySeek: SeekBar = findViewById(R.id.densitySeekBar)
+        val directionSpinner: Spinner = findViewById(R.id.directionSpinner)
+        val effectSpinner: Spinner = findViewById(R.id.effectSpinner)
+        val applyBtn: Button = findViewById(R.id.applyButton)
 
-        val seekBarSpeed: SeekBar = findViewById(R.id.seekBarSpeed)
-        val seekBarSize: SeekBar = findViewById(R.id.seekBarSize)
-        val seekBarDensity: SeekBar = findViewById(R.id.seekBarDensity)
+        // تحميل القيم القديمة
+        loadSettings(patternSpinner, colorSpinner, speedSeek, sizeSeek, densitySeek, directionSpinner, effectSpinner)
 
-        val btnApply: Button = findViewById(R.id.btnApply)
+        // زر التطبيق
+        applyBtn.setOnClickListener {
+            saveSettings(
+                patternSpinner.selectedItem.toString(),
+                colorSpinner.selectedItem.toString(),
+                speedSeek.progress,
+                sizeSeek.progress,
+                densitySeek.progress,
+                directionSpinner.selectedItem.toString(),
+                effectSpinner.selectedItem.toString()
+            )
 
-        // استرجاع القيم القديمة
-        spinnerPattern.setSelection(getIndex(spinnerPattern, prefs.getString("pattern", "Animated Gradient")!!))
-        spinnerColor.setSelection(getIndex(spinnerColor, prefs.getString("color", "أزرق")!!))
-        spinnerDirection.setSelection(getIndex(spinnerDirection, prefs.getString("direction", "يمين")!!))
-        spinnerEffect.setSelection(getIndex(spinnerEffect, prefs.getString("effect", "بدون")!!))
-
-        seekBarSpeed.progress = prefs.getInt("speed", 5)
-        seekBarSize.progress = prefs.getInt("size", 50)
-        seekBarDensity.progress = prefs.getInt("density", 5)
-
-        // عند الضغط على زر "تطبيق"
-        btnApply.setOnClickListener {
-            val editor = prefs.edit()
-            editor.putString("pattern", spinnerPattern.selectedItem.toString())
-            editor.putString("color", spinnerColor.selectedItem.toString())
-            editor.putString("direction", spinnerDirection.selectedItem.toString())
-            editor.putString("effect", spinnerEffect.selectedItem.toString())
-            editor.putInt("speed", seekBarSpeed.progress)
-            editor.putInt("size", seekBarSize.progress)
-            editor.putInt("density", seekBarDensity.progress)
-            editor.apply()
-
-            // شغّل شاشة تعيين الخلفية الحية
-            try {
-                val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER).apply {
-                    putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-                        android.content.ComponentName(this@MainActivity, MultiEngineService::class.java))
-                }
-                startActivity(intent)
-            } catch (e: Exception) {
-                Toast.makeText(this, "لم يتم دعم الخلفيات الحية على هذا الجهاز", Toast.LENGTH_LONG).show()
+            // تشغيل شاشة تعيين الخلفية
+            val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER).apply {
+                putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
+                    android.content.ComponentName(
+                        this@MainActivity,
+                        MultiEngineService::class.java
+                    )
+                )
             }
+            startActivity(intent)
         }
     }
 
-    // دالة مساعدة لاسترجاع index العنصر
-    private fun getIndex(spinner: Spinner, value: String): Int {
-        for (i in 0 until spinner.count) {
-            if (spinner.getItemAtPosition(i).toString().equals(value, ignoreCase = true)) {
-                return i
+    private fun saveSettings(
+        pattern: String,
+        color: String,
+        speed: Int,
+        size: Int,
+        density: Int,
+        direction: String,
+        effect: String
+    ) {
+        prefs.edit().apply {
+            putString("pattern", pattern)
+            putString("color", color)
+            putInt("speed", speed)
+            putInt("size", size)
+            putInt("density", density)
+            putString("direction", direction)
+            putString("effect", effect)
+            apply()
+        }
+    }
+
+    private fun loadSettings(
+        patternSpinner: Spinner,
+        colorSpinner: Spinner,
+        speedSeek: SeekBar,
+        sizeSeek: SeekBar,
+        densitySeek: SeekBar,
+        directionSpinner: Spinner,
+        effectSpinner: Spinner
+    ) {
+        val pattern = prefs.getString("pattern", "تدرج لوني")
+        val color = prefs.getString("color", "أزرق")
+        val speed = prefs.getInt("speed", 5)
+        val size = prefs.getInt("size", 50)
+        val density = prefs.getInt("density", 5)
+        val direction = prefs.getString("direction", "يمين")
+        val effect = prefs.getString("effect", "بدون")
+
+        setSpinnerSelection(patternSpinner, pattern)
+        setSpinnerSelection(colorSpinner, color)
+        setSpinnerSelection(directionSpinner, direction)
+        setSpinnerSelection(effectSpinner, effect)
+
+        speedSeek.progress = speed
+        sizeSeek.progress = size
+        densitySeek.progress = density
+    }
+
+    private fun setSpinnerSelection(spinner: Spinner, value: String?) {
+        if (value == null) return
+        val adapter = spinner.adapter
+        for (i in 0 until adapter.count) {
+            if (adapter.getItem(i).toString() == value) {
+                spinner.setSelection(i)
+                break
             }
         }
-        return 0
     }
 }
