@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">خلفيات حية</string>
+    <string name="app_name">الخلفية الحية النهائية</string>
     <string name="apply">تطبيق</string>
+
+    <!-- عناوين -->
+    <string name="title">إعدادات الخلفية المتحركة</string>
+    <string name="pattern_label">النمط:</string>
+    <string name="color_label">اللون:</string>
+    <string name="speed_label">السرعة:</string>
 
     <!-- الأنماط -->
     <string-array name="patterns">
@@ -18,21 +24,5 @@
         <item>بنفسجي</item>
         <item>سماوي</item>
         <item>عشوائي</item>
-    </string-array>
-
-    <!-- الاتجاهات -->
-    <string-array name="directions">
-        <item>يمين</item>
-        <item>يسار</item>
-        <item>أعلى</item>
-        <item>أسفل</item>
-    </string-array>
-
-    <!-- التأثيرات -->
-    <string-array name="effects">
-        <item>بدون</item>
-        <item>وميض</item>
-        <item>دوران</item>
-        <item>شفافية</item>
     </string-array>
 </resources>
