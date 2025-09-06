@@ -1,28 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">الخلفية الحية النهائية</string>
+    <string name="app_name">خلفية حية فائقة</string>
     <string name="apply">تطبيق</string>
-
-    <!-- عناوين -->
-    <string name="title">إعدادات الخلفية المتحركة</string>
-    <string name="pattern_label">النمط:</string>
-    <string name="color_label">اللون:</string>
-    <string name="speed_label">السرعة:</string>
-
-    <!-- الأنماط -->
-    <string-array name="patterns">
-        <item>تدرج لوني</item>
-        <item>تغير لون</item>
-    </string-array>
-
-    <!-- الألوان -->
-    <string-array name="colors">
-        <item>أحمر</item>
-        <item>أزرق</item>
-        <item>أخضر</item>
-        <item>أصفر</item>
-        <item>بنفسجي</item>
-        <item>سماوي</item>
-        <item>عشوائي</item>
-    </string-array>
+    <string name="pattern_label">النمط</string>
+    <string name="color_label">اللون</string>
+    <string name="direction_label">الاتجاه</string>
+    <string name="effect_label">التأثير</string>
+    <string name="speed_label">السرعة</string>
+    <string name="title">إعدادات الخلفية الحية</string>
 </resources>
