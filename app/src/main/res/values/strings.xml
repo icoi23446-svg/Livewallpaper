@@ -1,28 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Ultimate Live Wallpaper</string>
-    <string name="apply">Apply</string>
+    <string name="apply">تطبيق</string>
 
-    <!-- Labels -->
-    <string name="title">Live Wallpaper Settings</string>
-    <string name="pattern_label">Pattern:</string>
-    <string name="color_label">Color:</string>
-    <string name="speed_label">Speed:</string>
-
-    <!-- Patterns -->
+    <!-- الأنماط -->
     <string-array name="patterns">
-        <item>Gradient</item>
-        <item>Color Shift</item>
+        <item>تدرج لوني</item>
+        <item>تغير لون</item>
     </string-array>
 
-    <!-- Colors -->
+    <!-- الألوان -->
     <string-array name="colors">
-        <item>Red</item>
-        <item>Blue</item>
-        <item>Green</item>
-        <item>Yellow</item>
-        <item>Purple</item>
-        <item>Cyan</item>
-        <item>Random</item>
+        <item>أحمر</item>
+        <item>أزرق</item>
+        <item>أخضر</item>
+        <item>أصفر</item>
+        <item>بنفسجي</item>
+        <item>سماوي</item>
+        <item>عشوائي</item>
+    </string-array>
+
+    <!-- الاتجاهات -->
+    <string-array name="directions">
+        <item>يمين</item>
+        <item>يسار</item>
+        <item>أعلى</item>
+        <item>أسفل</item>
+    </string-array>
+
+    <!-- التأثيرات -->
+    <string-array name="effects">
+        <item>بدون</item>
+        <item>وميض</item>
+        <item>دوران</item>
+        <item>شفافية</item>
     </string-array>
 </resources>
