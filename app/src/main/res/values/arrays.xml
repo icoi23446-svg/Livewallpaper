@@ -1,35 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- الأنماط -->
-    <string-array name="patterns">
-        <item>تدرج لوني</item>
-        <item>تغير لون</item>
-    </string-array>
-
-    <!-- الألوان -->
+    <!-- Color Options -->
     <string-array name="colors">
-        <item>أحمر</item>
-        <item>أزرق</item>
-        <item>أخضر</item>
-        <item>أصفر</item>
-        <item>بنفسجي</item>
-        <item>سماوي</item>
-        <item>عشوائي</item>
+        <item>Red</item>
+        <item>Green</item>
+        <item>Blue</item>
+        <item>Yellow</item>
+        <item>Purple</item>
+        <item>White</item>
+        <item>Black</item>
     </string-array>
 
-    <!-- الاتجاهات -->
-    <string-array name="directions">
-        <item>يمين</item>
-        <item>يسار</item>
-        <item>أعلى</item>
-        <item>أسفل</item>
+    <!-- Pattern Options -->
+    <string-array name="patterns">
+        <item>Stripes</item>
+        <item>Circles</item>
+        <item>Waves</item>
+        <item>Stars</item>
+        <item>Grid</item>
     </string-array>
 
-    <!-- التأثيرات -->
-    <string-array name="effects">
-        <item>بدون</item>
-        <item>وميض</item>
-        <item>دوران</item>
-        <item>شفافية</item>
+    <!-- Speed Options -->
+    <string-array name="speeds">
+        <item>Slow</item>
+        <item>Normal</item>
+        <item>Fast</item>
     </string-array>
 </resources>
