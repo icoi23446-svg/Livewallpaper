@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Live Wallpaper</string>
+    <string name="app_name">Ultimate Live Wallpaper</string>
     <string name="apply">Apply</string>
-    <string name="pattern">Pattern</string>
-    <string name="color">Color</string>
-    <string name="speed">Speed</string>
+    <string name="pattern_label">Pattern</string>
+    <string name="color_label">Color</string>
+    <string name="speed_label">Speed</string>
 
     <!-- Patterns -->
     <string-array name="patterns">
