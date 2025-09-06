@@ -1,8 +1,8 @@
 <resources>
-    <color name="purple_500">#6200EE</color>
-    <color name="purple_700">#3700B3</color>
-    <color name="teal_200">#03DAC5</color>
-    <color name="teal_700">#018786</color>
-    <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
+    <color name="colorPrimary">#3F51B5</color> <!-- أزرق غامق -->
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color> <!-- وردي -->
+    <color name="colorBackground">#FAFAFA</color> <!-- فاتح -->
+    <color name="colorText">#212121</color> <!-- أسود رمادي -->
+    <color name="colorButtonText">#FFFFFF</color> <!-- أبيض -->
 </resources>
