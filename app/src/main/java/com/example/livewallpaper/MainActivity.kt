@@ -1,94 +1,115 @@
 package com.example.livewallpaper
 
-import android.content.Context
+import android.app.WallpaperManager
+import android.content.ComponentName
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.SeekBar
-import android.widget.Spinner
-import android.widget.ArrayAdapter
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var prefs: android.content.SharedPreferences
+    private lateinit var prefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        prefs = getSharedPreferences("WallpaperSettings", Context.MODE_PRIVATE)
+        prefs = getSharedPreferences("WallpaperSettings", MODE_PRIVATE)
 
-        // اربط العناصر من XML
-        val spinnerPattern: Spinner = findViewById(R.id.spinnerPattern)
-        val spinnerColor: Spinner = findViewById(R.id.spinnerColor)
-        val spinnerDirection: Spinner = findViewById(R.id.spinnerDirection)
-        val spinnerEffect: Spinner = findViewById(R.id.spinnerEffect)
+        // عناصر الواجهة
+        val patternSpinner = findViewById<Spinner>(R.id.patternSpinner)
+        val colorSpinner = findViewById<Spinner>(R.id.colorSpinner)
+        val directionSpinner = findViewById<Spinner>(R.id.directionSpinner)
+        val effectSpinner = findViewById<Spinner>(R.id.effectSpinner)
 
-        val seekSpeed: SeekBar = findViewById(R.id.seekSpeed)
-        val seekSize: SeekBar = findViewById(R.id.seekSize)
-        val seekDensity: SeekBar = findViewById(R.id.seekDensity)
+        val speedSeek = findViewById<SeekBar>(R.id.speedSeek)
+        val sizeSeek = findViewById<SeekBar>(R.id.sizeSeek)
+        val densitySeek = findViewById<SeekBar>(R.id.densitySeek)
 
-        // القوائم
-        val patterns = listOf("Animated Gradient", "Color Cycle", "Particles", "Waves")
-        val colors = listOf("أحمر", "أزرق", "أخضر", "أصفر", "بنفسجي", "سماوي", "عشوائي")
-        val directions = listOf("يمين", "يسار", "أعلى", "أسفل")
-        val effects = listOf("بدون", "وميض", "دوران", "شفافية")
+        val applyButton = findViewById<Button>(R.id.applyButton)
 
-        // adapters
-        spinnerPattern.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, patterns)
-        spinnerColor.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, colors)
-        spinnerDirection.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, directions)
-        spinnerEffect.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, effects)
+        // تحميل القوائم من arrays.xml
+        patternSpinner.adapter = ArrayAdapter.createFromResource(
+            this, R.array.patterns_array, android.R.layout.simple_spinner_item
+        ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
 
-        // تحميل القيم المحفوظة
-        spinnerPattern.setSelection(patterns.indexOf(prefs.getString("pattern", "Animated Gradient")))
-        spinnerColor.setSelection(colors.indexOf(prefs.getString("color", "أزرق")))
-        spinnerDirection.setSelection(directions.indexOf(prefs.getString("direction", "يمين")))
-        spinnerEffect.setSelection(effects.indexOf(prefs.getString("effect", "بدون")))
+        colorSpinner.adapter = ArrayAdapter.createFromResource(
+            this, R.array.colors_array, android.R.layout.simple_spinner_item
+        ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
 
-        seekSpeed.progress = prefs.getInt("speed", 5)
-        seekSize.progress = prefs.getInt("size", 50)
-        seekDensity.progress = prefs.getInt("density", 5)
+        directionSpinner.adapter = ArrayAdapter.createFromResource(
+            this, R.array.direction_array, android.R.layout.simple_spinner_item
+        ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
 
-        // listeners للحفظ عند التغيير
-        spinnerPattern.setOnItemSelectedListener(SimpleItemSelectedListener { value ->
-            prefs.edit().putString("pattern", value).apply()
+        effectSpinner.adapter = ArrayAdapter.createFromResource(
+            this, R.array.effects_array, android.R.layout.simple_spinner_item
+        ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+
+        // حفظ القيم عند التغيير
+        patternSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                prefs.edit().putString("pattern", parent?.getItemAtPosition(position).toString()).apply()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        colorSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                prefs.edit().putString("color", parent?.getItemAtPosition(position).toString()).apply()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        directionSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                prefs.edit().putString("direction", parent?.getItemAtPosition(position).toString()).apply()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        effectSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                prefs.edit().putString("effect", parent?.getItemAtPosition(position).toString()).apply()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        // SeekBars
+        speedSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                prefs.edit().putInt("speed", progress).apply()
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-        spinnerColor.setOnItemSelectedListener(SimpleItemSelectedListener { value ->
-            prefs.edit().putString("color", value).apply()
-        })
-        spinnerDirection.setOnItemSelectedListener(SimpleItemSelectedListener { value ->
-            prefs.edit().putString("direction", value).apply()
-        })
-        spinnerEffect.setOnItemSelectedListener(SimpleItemSelectedListener { value ->
-            prefs.edit().putString("effect", value).apply()
+
+        sizeSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                prefs.edit().putInt("size", progress).apply()
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        seekSpeed.setOnSeekBarChangeListener(SimpleSeekBarListener { value ->
-            prefs.edit().putInt("speed", value).apply()
+        densitySeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                prefs.edit().putInt("density", progress).apply()
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-        seekSize.setOnSeekBarChangeListener(SimpleSeekBarListener { value ->
-            prefs.edit().putInt("size", value).apply()
-        })
-        seekDensity.setOnSeekBarChangeListener(SimpleSeekBarListener { value ->
-            prefs.edit().putInt("density", value).apply()
-        })
+
+        // زر التطبيق
+        applyButton.setOnClickListener {
+            val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER).apply {
+                putExtra(
+                    WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
+                    ComponentName(this@MainActivity, MultiEngineService::class.java)
+                )
+            }
+            startActivity(intent)
+        }
     }
-}
-
-// Listener بسيط للـ Spinner
-class SimpleItemSelectedListener(val callback: (String) -> Unit) : android.widget.AdapterView.OnItemSelectedListener {
-    override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
-        val value = parent?.getItemAtPosition(position).toString()
-        callback(value)
-    }
-    override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
-}
-
-// Listener بسيط للـ SeekBar
-class SimpleSeekBarListener(val callback: (Int) -> Unit) : SeekBar.OnSeekBarChangeListener {
-    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-        callback(progress)
-    }
-    override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-    override fun onStopTrackingTouch(seekBar: SeekBar?) {}
 }
