@@ -1,74 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="16dp"
     android:gravity="center"
-    android:padding="20dp"
     tools:context=".MainActivity">
-
-    <!-- العنوان -->
-    <TextView
-        android:id="@+id/appTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:textColor="?attr/colorPrimary"
-        android:layout_marginBottom="24dp"/>
 
     <!-- اختيار النمط -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/pattern_label"
-        android:layout_marginTop="8dp"/>
+        android:textStyle="bold" />
 
     <Spinner
         android:id="@+id/patternSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"/>
+        android:spinnerMode="dropdown" />
 
     <!-- اختيار اللون -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/color_label"
-        android:layout_marginTop="8dp"/>
+        android:textStyle="bold"
+        android:layout_marginTop="12dp"/>
 
     <Spinner
         android:id="@+id/colorSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"/>
+        android:spinnerMode="dropdown" />
 
     <!-- التحكم في السرعة -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/speed_label"
-        android:layout_marginTop="8dp"/>
+        android:textStyle="bold"
+        android:layout_marginTop="12dp"/>
 
     <SeekBar
         android:id="@+id/speedSeekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:max="10"
-        android:progress="5"
-        android:layout_marginBottom="24dp"/>
+        android:max="10" />
 
     <!-- زر التطبيق -->
     <Button
         android:id="@+id/applyButton"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/apply"
-        android:backgroundTint="?attr/colorPrimary"
-        android:textColor="@android:color/white"
-        android:padding="12dp"/>
+        android:layout_marginTop="24dp" />
 
 </LinearLayout>
