@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
         val applyButton = findViewById<Button>(R.id.applyButton)
 
-        // تحميل البيانات من القوائم (arrays.xml صار مدموج في strings.xml)
+        // adapters
         patternSpinner.adapter = ArrayAdapter.createFromResource(
             this, R.array.patterns, android.R.layout.simple_spinner_item
         ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             this, R.array.effects, android.R.layout.simple_spinner_item
         ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
 
-        // تحميل القيم المحفوظة سابقاً
+        // تحميل القيم المحفوظة
         setSpinnerSelection(patternSpinner, prefs.getString("pattern", null))
         setSpinnerSelection(colorSpinner, prefs.getString("color", null))
         setSpinnerSelection(directionSpinner, prefs.getString("direction", null))
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         sizeSeek.progress = prefs.getInt("size", 50)
         densitySeek.progress = prefs.getInt("density", 5)
 
-        // عند التغيير → نحفظ القيم
+        // Listeners للحفظ
         spinnerSave(patternSpinner, "pattern")
         spinnerSave(colorSpinner, "color")
         spinnerSave(directionSpinner, "direction")
@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         seekSave(sizeSeek, "size")
         seekSave(densitySeek, "density")
 
-        // زر "تطبيق"
+        // زر التعيين
         applyButton.setOnClickListener {
             val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER).apply {
                 putExtra(
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setSpinnerSelection(spinner: Spinner, value: String?) {
         if (value == null) return
-        val adapter = spinner.adapter as ArrayAdapter<*>
+        val adapter = spinner.adapter as ArrayAdapter<String>
         val pos = adapter.getPosition(value)
         if (pos >= 0) spinner.setSelection(pos)
     }
