@@ -4,9 +4,10 @@
     <string name="apply">Apply</string>
 
     <!-- Labels -->
-    <string name="pattern_label">Pattern</string>
-    <string name="color_label">Color</string>
-    <string name="speed_label">Speed</string>
+    <string name="title">Live Wallpaper Settings</string>
+    <string name="pattern_label">Pattern:</string>
+    <string name="color_label">Color:</string>
+    <string name="speed_label">Speed:</string>
 
     <!-- Patterns -->
     <string-array name="patterns">
