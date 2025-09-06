@@ -25,14 +25,8 @@ jobs:
       with:
         gradle-version: 8.6
 
-    - name: Build with Gradle
-      run: |
-        # جرّب gradlew لو موجود
-        if [ -f "./gradlew" ]; then
-          ./gradlew assembleDebug --no-daemon
-        else
-          gradle assembleDebug --no-daemon
-        fi
+    - name: Build with Gradle 8.6
+      run: gradle assembleDebug --no-daemon
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
