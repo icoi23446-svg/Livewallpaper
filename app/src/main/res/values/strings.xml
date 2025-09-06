@@ -1,19 +1,18 @@
 <resources>
-    <!-- اسم التطبيق -->
-    <string name="app_name">الخلفيات الحية</string>
+    <string name="app_name">Ultimate Live Wallpaper</string>
+    <string name="apply">تطبيق الخلفية</string>
 
-    <!-- شاشات MainActivity -->
-    <string name="pattern_label">النمط</string>
-    <string name="color_label">اللون</string>
-    <string name="speed_label">السرعة</string>
-    <string name="size_label">الحجم</string>
-    <string name="density_label">الكثافة</string>
-    <string name="direction_label">الاتجاه</string>
-    <string name="effect_label">التأثير</string>
-    <string name="set_wallpaper">تعيين كخلفية حية</string>
+    <!-- عناوين -->
+    <string name="choose_pattern">اختر النمط:</string>
+    <string name="choose_color">اختر اللون:</string>
+    <string name="choose_direction">الاتجاه:</string>
+    <string name="choose_effect">التأثير:</string>
+    <string name="speed">السرعة:</string>
+    <string name="size">الحجم:</string>
+    <string name="density">الكثافة:</string>
 
-    <!-- أنماط الخلفيات -->
-    <string-array name="patterns">
+    <!-- الأنماط -->
+    <string-array name="patterns_array">
         <item>تدرج لوني</item>
         <item>تغير لون</item>
         <item>جسيمات</item>
@@ -21,10 +20,10 @@
     </string-array>
 
     <!-- الألوان -->
-    <string-array name="colors">
+    <string-array name="colors_array">
         <item>أحمر</item>
-        <item>أخضر</item>
         <item>أزرق</item>
+        <item>أخضر</item>
         <item>أصفر</item>
         <item>بنفسجي</item>
         <item>سماوي</item>
@@ -32,15 +31,15 @@
     </string-array>
 
     <!-- الاتجاهات -->
-    <string-array name="directions">
-        <item>يمين</item>
-        <item>يسار</item>
+    <string-array name="direction_array">
         <item>أعلى</item>
         <item>أسفل</item>
+        <item>يمين</item>
+        <item>يسار</item>
     </string-array>
 
     <!-- التأثيرات -->
-    <string-array name="effects">
+    <string-array name="effects_array">
         <item>بدون</item>
         <item>وميض</item>
         <item>دوران</item>
