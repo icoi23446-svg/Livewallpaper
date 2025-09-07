@@ -21,6 +21,8 @@ class MainActivity : AppCompatActivity() {
         // عناصر الواجهة
         val patternSpinner = findViewById<Spinner>(R.id.patternSpinner)
         val colorSpinner = findViewById<Spinner>(R.id.colorSpinner)
+        val directionSpinner = findViewById<Spinner>(R.id.directionSpinner)
+        val effectSpinner = findViewById<Spinner>(R.id.effectSpinner)
         val speedSeek = findViewById<SeekBar>(R.id.speedSeekBar)
         val applyButton = findViewById<Button>(R.id.applyButton)
 
@@ -33,14 +35,28 @@ class MainActivity : AppCompatActivity() {
             this, R.array.colors, android.R.layout.simple_spinner_item
         ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
 
+        directionSpinner.adapter = ArrayAdapter.createFromResource(
+            this, R.array.directions, android.R.layout.simple_spinner_item
+        ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+
+        effectSpinner.adapter = ArrayAdapter.createFromResource(
+            this, R.array.effects, android.R.layout.simple_spinner_item
+        ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+
         // تحميل القيم المحفوظة
-        setSpinnerSelection(patternSpinner, prefs.getString("pattern", null))
-        setSpinnerSelection(colorSpinner, prefs.getString("color", null))
+        setSpinnerSelection(patternSpinner, prefs.getString("pattern", "تدرج لوني") ?: "تدرج لوني")
+        setSpinnerSelection(colorSpinner, prefs.getString("color", "عشوائي") ?: "عشوائي")
+        setSpinnerSelection(directionSpinner, prefs.getString("direction", "يمين") ?: "يمين")
+        setSpinnerSelection(effectSpinner, prefs.getString("effect", "بدون") ?: "بدون")
+
         speedSeek.progress = prefs.getInt("speed", 5)
 
-        // حفظ القيم عند التغيير
+        // حفظ التغييرات
         spinnerSave(patternSpinner, "pattern")
         spinnerSave(colorSpinner, "color")
+        spinnerSave(directionSpinner, "direction")
+        spinnerSave(effectSpinner, "effect")
+
         seekSave(speedSeek, "speed")
 
         // زر التطبيق
@@ -55,8 +71,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setSpinnerSelection(spinner: Spinner, value: String?) {
-        if (value == null) return
+    private fun setSpinnerSelection(spinner: Spinner, value: String) {
         val adapter = spinner.adapter as ArrayAdapter<*>
         val pos = adapter.getPosition(value)
         if (pos >= 0) spinner.setSelection(pos)
@@ -83,6 +98,7 @@ class MainActivity : AppCompatActivity() {
             override fun onProgressChanged(sb: SeekBar?, progress: Int, fromUser: Boolean) {
                 prefs.edit().putInt(key, progress).apply()
             }
+
             override fun onStartTrackingTouch(sb: SeekBar?) {}
             override fun onStopTrackingTouch(sb: SeekBar?) {}
         })
