@@ -1,10 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Ultimate Live Wallpaper</string>
-    <string name="apply">تطبيق</string>
-
-    <!-- عناوين الواجهة -->
-    <string name="title">الخلفية الحية</string>
-    <string name="color_label">اللون</string>
-    <string name="pattern_label">النمط</string>
-    <string name="speed_label">السرعة</string>
+    <string name="apply">Apply</string>
+    <string name="pattern_label">Pattern</string>
+    <string name="color_label">Color</string>
+    <string name="direction_label">Direction</string>
+    <string name="effect_label">Effect</string>
+    <string name="speed_label">Speed</string>
+    <string name="title">Settings</string>
 </resources>
