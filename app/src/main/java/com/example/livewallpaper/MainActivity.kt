@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         val directionSpinner = findViewById<Spinner>(R.id.directionSpinner)
         val effectSpinner = findViewById<Spinner>(R.id.effectSpinner)
         val speedSeek = findViewById<SeekBar>(R.id.speedSeekBar)
+
         val applyButton = findViewById<Button>(R.id.applyButton)
 
         // إعداد الـ Spinners
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         setSpinnerSelection(colorSpinner, prefs.getString("color", null))
         setSpinnerSelection(directionSpinner, prefs.getString("direction", null))
         setSpinnerSelection(effectSpinner, prefs.getString("effect", null))
+
         speedSeek.progress = prefs.getInt("speed", 5)
 
         // حفظ التغييرات
@@ -55,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         spinnerSave(colorSpinner, "color")
         spinnerSave(directionSpinner, "direction")
         spinnerSave(effectSpinner, "effect")
+
         seekSave(speedSeek, "speed")
 
         // زر التطبيق
@@ -69,11 +72,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // ✅ التعديل هنا علشان يحل مشكلة Type mismatch
     private fun setSpinnerSelection(spinner: Spinner, value: String?) {
-        if (value == null) return
-        val adapter = spinner.adapter as ArrayAdapter<*>
-        val pos = adapter.getPosition(value)
-        if (pos >= 0) spinner.setSelection(pos)
+        value?.let {
+            val adapter = spinner.adapter as ArrayAdapter<String>
+            val pos = adapter.getPosition(it)
+            if (pos >= 0) spinner.setSelection(pos)
+        }
     }
 
     private fun spinnerSave(spinner: Spinner, key: String) {
@@ -97,6 +102,7 @@ class MainActivity : AppCompatActivity() {
             override fun onProgressChanged(sb: SeekBar?, progress: Int, fromUser: Boolean) {
                 prefs.edit().putInt(key, progress).apply()
             }
+
             override fun onStartTrackingTouch(sb: SeekBar?) {}
             override fun onStopTrackingTouch(sb: SeekBar?) {}
         })
