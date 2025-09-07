@@ -44,11 +44,11 @@ class MainActivity : AppCompatActivity() {
             this, R.array.effects, android.R.layout.simple_spinner_item
         ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
 
-        // تحميل القيم المحفوظة (مع قيم افتراضية إذا null)
-        setSpinnerSelection(patternSpinner, prefs.getString("pattern", "تدرج لوني") ?: "تدرج لوني")
-        setSpinnerSelection(colorSpinner, prefs.getString("color", "عشوائي") ?: "عشوائي")
-        setSpinnerSelection(directionSpinner, prefs.getString("direction", "يمين") ?: "يمين")
-        setSpinnerSelection(effectSpinner, prefs.getString("effect", "بدون") ?: "بدون")
+        // تحميل القيم المحفوظة
+        setSpinnerSelection(patternSpinner, prefs.getString("pattern", "تدرج لوني"))
+        setSpinnerSelection(colorSpinner, prefs.getString("color", "عشوائي"))
+        setSpinnerSelection(directionSpinner, prefs.getString("direction", "يمين"))
+        setSpinnerSelection(effectSpinner, prefs.getString("effect", "بدون"))
 
         speedSeek.progress = prefs.getInt("speed", 5)
 
@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         spinnerSave(colorSpinner, "color")
         spinnerSave(directionSpinner, "direction")
         spinnerSave(effectSpinner, "effect")
+
         seekSave(speedSeek, "speed")
 
         // زر التطبيق
@@ -71,7 +72,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setSpinnerSelection(spinner: Spinner, value: String) {
+    // ✅ تعديل الدالة هنا
+    private fun setSpinnerSelection(spinner: Spinner, value: String?) {
+        if (value.isNullOrEmpty()) return
         val adapter = spinner.adapter as ArrayAdapter<*>
         val pos = adapter.getPosition(value)
         if (pos >= 0) spinner.setSelection(pos)
