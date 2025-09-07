@@ -24,7 +24,6 @@ class MainActivity : AppCompatActivity() {
         val directionSpinner = findViewById<Spinner>(R.id.directionSpinner)
         val effectSpinner = findViewById<Spinner>(R.id.effectSpinner)
         val speedSeek = findViewById<SeekBar>(R.id.speedSeekBar)
-
         val applyButton = findViewById<Button>(R.id.applyButton)
 
         // إعداد الـ Spinners
@@ -44,11 +43,11 @@ class MainActivity : AppCompatActivity() {
             this, R.array.effects, android.R.layout.simple_spinner_item
         ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
 
-        // تحميل القيم المحفوظة (مع orEmpty() لحل مشكلة Nothing?)
-        setSpinnerSelection(patternSpinner, prefs.getString("pattern", "تدرج لوني").orEmpty())
-        setSpinnerSelection(colorSpinner, prefs.getString("color", "عشوائي").orEmpty())
-        setSpinnerSelection(directionSpinner, prefs.getString("direction", "يمين").orEmpty())
-        setSpinnerSelection(effectSpinner, prefs.getString("effect", "بدون").orEmpty())
+        // تحميل القيم المحفوظة
+        setSpinnerSelection(patternSpinner, prefs.getString("pattern", null))
+        setSpinnerSelection(colorSpinner, prefs.getString("color", null))
+        setSpinnerSelection(directionSpinner, prefs.getString("direction", null))
+        setSpinnerSelection(effectSpinner, prefs.getString("effect", null))
 
         speedSeek.progress = prefs.getInt("speed", 5)
 
@@ -72,8 +71,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setSpinnerSelection(spinner: Spinner, value: String) {
-        if (value.isEmpty()) return
+    private fun setSpinnerSelection(spinner: Spinner, value: String?) {
+        if (value.isNullOrEmpty()) return
         val adapter = spinner.adapter as ArrayAdapter<*>
         val pos = adapter.getPosition(value)
         if (pos >= 0) spinner.setSelection(pos)
