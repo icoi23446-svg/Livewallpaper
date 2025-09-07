@@ -1,107 +1,71 @@
 package com.example.livewallpaper
 
-import android.app.WallpaperManager
-import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
+
     private lateinit var prefs: SharedPreferences
+    private lateinit var patternSpinner: Spinner
+    private lateinit var colorSpinner: Spinner
+    private lateinit var directionSpinner: Spinner
+    private lateinit var effectSpinner: Spinner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        prefs = getSharedPreferences("WallpaperSettings", Context.MODE_PRIVATE)
+        prefs = getSharedPreferences("WallpaperPrefs", Context.MODE_PRIVATE)
 
-        // عناصر الواجهة
-        val patternSpinner = findViewById<Spinner>(R.id.patternSpinner)
-        val colorSpinner = findViewById<Spinner>(R.id.colorSpinner)
-        val directionSpinner = findViewById<Spinner>(R.id.directionSpinner)
-        val effectSpinner = findViewById<Spinner>(R.id.effectSpinner)
-        val speedSeek = findViewById<SeekBar>(R.id.speedSeekBar)
-        val applyButton = findViewById<Button>(R.id.applyButton)
+        // ربط الـ Spinners
+        patternSpinner = findViewById(R.id.patternSpinner)
+        colorSpinner = findViewById(R.id.colorSpinner)
+        directionSpinner = findViewById(R.id.directionSpinner)
+        effectSpinner = findViewById(R.id.effectSpinner)
 
-        // إعداد الـ Spinners
-        patternSpinner.adapter = ArrayAdapter.createFromResource(
-            this, R.array.patterns, android.R.layout.simple_spinner_item
-        ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+        // إعداد الأدابتور من الموارد
+        setupSpinner(patternSpinner, R.array.patterns)
+        setupSpinner(colorSpinner, R.array.colors)
+        setupSpinner(directionSpinner, R.array.directions)
+        setupSpinner(effectSpinner, R.array.effects)
 
-        colorSpinner.adapter = ArrayAdapter.createFromResource(
-            this, R.array.colors, android.R.layout.simple_spinner_item
-        ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+        // تحميل القيم المخزنة
+        setSpinnerSelection(patternSpinner, prefs.getString("pattern", null) ?: "")
+        setSpinnerSelection(colorSpinner, prefs.getString("color", null) ?: "")
+        setSpinnerSelection(directionSpinner, prefs.getString("direction", null) ?: "")
+        setSpinnerSelection(effectSpinner, prefs.getString("effect", null) ?: "")
 
-        directionSpinner.adapter = ArrayAdapter.createFromResource(
-            this, R.array.directions, android.R.layout.simple_spinner_item
-        ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
-
-        effectSpinner.adapter = ArrayAdapter.createFromResource(
-            this, R.array.effects, android.R.layout.simple_spinner_item
-        ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
-
-        // تحميل القيم المحفوظة
-        setSpinnerSelection(patternSpinner, prefs.getString("pattern", null))
-        setSpinnerSelection(colorSpinner, prefs.getString("color", null))
-        setSpinnerSelection(directionSpinner, prefs.getString("direction", null))
-        setSpinnerSelection(effectSpinner, prefs.getString("effect", null))
-
-        speedSeek.progress = prefs.getInt("speed", 5)
-
-        // حفظ التغييرات
-        spinnerSave(patternSpinner, "pattern")
-        spinnerSave(colorSpinner, "color")
-        spinnerSave(directionSpinner, "direction")
-        spinnerSave(effectSpinner, "effect")
-
-        seekSave(speedSeek, "speed")
-
-        // زر التطبيق
+        // زر الحفظ
+        val applyButton: Button = findViewById(R.id.applyButton)
         applyButton.setOnClickListener {
-            val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER).apply {
-                putExtra(
-                    WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-                    ComponentName(this@MainActivity, MultiEngineService::class.java)
-                )
-            }
-            startActivity(intent)
+            val editor = prefs.edit()
+            editor.putString("pattern", patternSpinner.selectedItem.toString())
+            editor.putString("color", colorSpinner.selectedItem.toString())
+            editor.putString("direction", directionSpinner.selectedItem.toString())
+            editor.putString("effect", effectSpinner.selectedItem.toString())
+            editor.apply()
         }
     }
 
-    private fun setSpinnerSelection(spinner: Spinner, value: String?) {
-        if (value.isNullOrEmpty()) return
-        val adapter = spinner.adapter as ArrayAdapter<*>
+    private fun setupSpinner(spinner: Spinner, arrayRes: Int) {
+        val adapter = ArrayAdapter.createFromResource(
+            this,
+            arrayRes,
+            android.R.layout.simple_spinner_item
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+    }
+
+    private fun setSpinnerSelection(spinner: Spinner, value: String) {
+        if (value.isEmpty()) return
+        val adapter = spinner.adapter as ArrayAdapter<String>
         val pos = adapter.getPosition(value)
         if (pos >= 0) spinner.setSelection(pos)
-    }
-
-    private fun spinnerSave(spinner: Spinner, key: String) {
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: android.view.View?,
-                position: Int,
-                id: Long
-            ) {
-                val value = parent.getItemAtPosition(position).toString()
-                prefs.edit().putString(key, value).apply()
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
-    }
-
-    private fun seekSave(seekBar: SeekBar, key: String) {
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(sb: SeekBar?, progress: Int, fromUser: Boolean) {
-                prefs.edit().putInt(key, progress).apply()
-            }
-
-            override fun onStartTrackingTouch(sb: SeekBar?) {}
-            override fun onStopTrackingTouch(sb: SeekBar?) {}
-        })
     }
 }
