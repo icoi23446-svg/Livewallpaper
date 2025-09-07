@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         val directionSpinner = findViewById<Spinner>(R.id.directionSpinner)
         val effectSpinner = findViewById<Spinner>(R.id.effectSpinner)
         val speedSeek = findViewById<SeekBar>(R.id.speedSeekBar)
+
         val applyButton = findViewById<Button>(R.id.applyButton)
 
         // إعداد الـ Spinners
@@ -43,7 +44,7 @@ class MainActivity : AppCompatActivity() {
             this, R.array.effects, android.R.layout.simple_spinner_item
         ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
 
-        // تحميل القيم المحفوظة
+        // تحميل القيم المحفوظة (مع قيم افتراضية إذا null)
         setSpinnerSelection(patternSpinner, prefs.getString("pattern", "تدرج لوني") ?: "تدرج لوني")
         setSpinnerSelection(colorSpinner, prefs.getString("color", "عشوائي") ?: "عشوائي")
         setSpinnerSelection(directionSpinner, prefs.getString("direction", "يمين") ?: "يمين")
@@ -56,7 +57,6 @@ class MainActivity : AppCompatActivity() {
         spinnerSave(colorSpinner, "color")
         spinnerSave(directionSpinner, "direction")
         spinnerSave(effectSpinner, "effect")
-
         seekSave(speedSeek, "speed")
 
         // زر التطبيق
