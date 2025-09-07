@@ -1,9 +1,11 @@
 package com.example.livewallpaper
 
 import android.graphics.*
+import android.os.Handler
+import android.os.Looper
 import android.service.wallpaper.WallpaperService
 import android.view.SurfaceHolder
-import android.util.Log
+import kotlin.math.sin
 
 class MultiEngineService : WallpaperService() {
     override fun onCreateEngine(): Engine {
@@ -12,15 +14,25 @@ class MultiEngineService : WallpaperService() {
 
     inner class GradientEngine : Engine() {
         private val paint = Paint()
+        private val handler = Handler(Looper.getMainLooper())
         private var running = true
+        private var time = 0.0
 
-        private var pattern: String = "تدرج لوني"
-        private var color: Int = Color.BLUE
+        private val drawRunner = object : Runnable {
+            override fun run() {
+                drawFrame()
+                if (running) {
+                    handler.postDelayed(this, 50) // كل 50ms يرسم فريم جديد
+                }
+            }
+        }
 
         override fun onVisibilityChanged(visible: Boolean) {
             running = visible
             if (visible) {
-                drawFrame()
+                handler.post(drawRunner)
+            } else {
+                handler.removeCallbacks(drawRunner)
             }
         }
 
@@ -30,21 +42,22 @@ class MultiEngineService : WallpaperService() {
             try {
                 canvas = holder.lockCanvas()
                 if (canvas != null) {
-                    Log.d("Wallpaper", "Pattern = $pattern, Color = $color")
+                    time += 0.1
 
-                    when (pattern) {
-                        "تدرج لوني" -> drawGradient(canvas)
-                        "تغير لون" -> drawColorShift(canvas)
-                        else -> {
-                            paint.color = Color.GRAY
-                            canvas.drawRect(
-                                0f, 0f, 
-                                canvas.width.toFloat(), 
-                                canvas.height.toFloat(), 
-                                paint
-                            )
-                        }
-                    }
+                    // ألوان بتتغير مع الزمن
+                    val r = (128 + 127 * sin(time)).toInt()
+                    val g = (128 + 127 * sin(time + 2)).toInt()
+                    val b = (128 + 127 * sin(time + 4)).toInt()
+
+                    val shader = LinearGradient(
+                        0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(),
+                        intArrayOf(Color.rgb(r, g, b), Color.rgb(g, b, r)),
+                        null,
+                        Shader.TileMode.CLAMP
+                    )
+                    paint.shader = shader
+                    canvas.drawRect(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(), paint)
+                    paint.shader = null
                 }
             } finally {
                 if (canvas != null) {
@@ -53,26 +66,10 @@ class MultiEngineService : WallpaperService() {
             }
         }
 
-        private fun drawGradient(canvas: Canvas) {
-            val shader = LinearGradient(
-                0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(),
-                intArrayOf(Color.RED, Color.BLUE, Color.GREEN),
-                null,
-                Shader.TileMode.CLAMP
-            )
-            paint.shader = shader
-            canvas.drawRect(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(), paint)
-            paint.shader = null
-        }
-
-        private fun drawColorShift(canvas: Canvas) {
-            paint.color = color
-            canvas.drawRect(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat(), paint)
-        }
-
         override fun onDestroy() {
             super.onDestroy()
             running = false
+            handler.removeCallbacks(drawRunner)
         }
     }
 }
