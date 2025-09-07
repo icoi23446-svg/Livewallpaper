@@ -44,11 +44,11 @@ class MainActivity : AppCompatActivity() {
             this, R.array.effects, android.R.layout.simple_spinner_item
         ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
 
-        // تحميل القيم المحفوظة
-        setSpinnerSelection(patternSpinner, prefs.getString("pattern", "تدرج لوني"))
-        setSpinnerSelection(colorSpinner, prefs.getString("color", "عشوائي"))
-        setSpinnerSelection(directionSpinner, prefs.getString("direction", "يمين"))
-        setSpinnerSelection(effectSpinner, prefs.getString("effect", "بدون"))
+        // تحميل القيم المحفوظة (مع orEmpty() لحل مشكلة Nothing?)
+        setSpinnerSelection(patternSpinner, prefs.getString("pattern", "تدرج لوني").orEmpty())
+        setSpinnerSelection(colorSpinner, prefs.getString("color", "عشوائي").orEmpty())
+        setSpinnerSelection(directionSpinner, prefs.getString("direction", "يمين").orEmpty())
+        setSpinnerSelection(effectSpinner, prefs.getString("effect", "بدون").orEmpty())
 
         speedSeek.progress = prefs.getInt("speed", 5)
 
@@ -72,9 +72,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ✅ تعديل الدالة هنا
-    private fun setSpinnerSelection(spinner: Spinner, value: String?) {
-        if (value.isNullOrEmpty()) return
+    private fun setSpinnerSelection(spinner: Spinner, value: String) {
+        if (value.isEmpty()) return
         val adapter = spinner.adapter as ArrayAdapter<*>
         val pos = adapter.getPosition(value)
         if (pos >= 0) spinner.setSelection(pos)
