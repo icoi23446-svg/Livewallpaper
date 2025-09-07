@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">خلفية حية فائقة</string>
+    <string name="app_name">خلفيات متحركة</string>
     <string name="apply">تطبيق</string>
     <string name="pattern_label">النمط</string>
     <string name="color_label">اللون</string>
     <string name="direction_label">الاتجاه</string>
     <string name="effect_label">التأثير</string>
     <string name="speed_label">السرعة</string>
-    <string name="title">إعدادات الخلفية الحية</string>
+    <string name="title">الإعدادات</string>
 </resources>
